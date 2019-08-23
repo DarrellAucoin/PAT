@@ -1,25 +1,18 @@
 # !/usr/bin/env python3
 # encoding: utf-8
 
-import paho.mqtt.client as mqtt
-from sys import platform
-
-if platform == "darwin":
-    # OS X
-    ROOT_DIR = "Users/daucoin/github/PAT_on_Pi"
-else:
-    # Raspberry pi
-    ROOT_DIR = "/home/pi/PAT"
-
-def on_connect(client, userdata, flags, rc):
-    print('Connected')
-    mqtt.subscribe('hermes/intent/#')
+# import paho.mqtt.client as mqtt
 
 
-mqtt = mqtt.Client()
-mqtt.on_connect = on_connect
-mqtt.connect('raspberrypi.local', 1883)
-mqtt.loop_forever()
+
+# def on_connect(client, userdata, flags, rc):
+#     print('Connected')
+#     mqtt.subscribe('hermes/intent/#')
+#
+# mqtt = mqtt.Client()
+# mqtt.on_connect = on_connect
+# mqtt.connect('raspberrypi.local', 1883)
+# mqtt.loop_forever()
 
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
@@ -33,25 +26,48 @@ import time
 import sys
 import pygameMenu
 import subprocess
+from sys import platform
 
-bashStartSnips = ["brew services start mosquitto",
-                  "brew services start snips-audio-server",
-                  "brew services start snips-hotword",
-                  "brew services start snips-tts",
-                  "brew services start snips-nlu",
-                  "brew services start snips-asr",
-                  "brew services start snips-dialogue"]
-bashStopSnips = ["brew services stop mosquitto",
-                  "brew services stop snips-audio-server",
-                  "brew services stop snips-hotword",
-                  "brew services stop snips-tts",
-                  "brew services stop snips-nlu",
-                 "brew services start snips-asr",
-                  "brew services stop snips-dialogue"]
+if platform == "darwin":
+    # OS X
+    ROOT_DIR = "Users/daucoin/github/PAT_on_Pi"
+    bashStartSnips = ["brew services start mosquitto",
+                      "brew services start snips-audio-server",
+                      "brew services start snips-hotword",
+                      "brew services start snips-tts",
+                      "brew services start snips-nlu",
+                      "brew services start snips-asr",
+                      "brew services start snips-dialogue"]
+    bashStopSnips = ["brew services stop mosquitto",
+                     "brew services stop snips-audio-server",
+                     "brew services stop snips-hotword",
+                     "brew services stop snips-tts",
+                     "brew services stop snips-nlu",
+                     "brew services start snips-asr",
+                     "brew services stop snips-dialogue"]
 
-for command in bashStartSnips:
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-    output, error = process.communicate()
+    def start_snips():
+        for command in bashStartSnips:
+            process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+            output, error = process.communicate()
+
+    def stop_snips():
+        for command in bashStopSnips:
+            process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+            output, error = process.communicate()
+
+else:
+    # Raspberry pi
+    ROOT_DIR = "/home/pi/PAT"
+
+    def start_snips():
+        pass
+
+    def stop_snips():
+        pass
+
+
+start_snips()
 
 CONFIG_INI = "config.ini"
 
@@ -107,8 +123,6 @@ def insert_image(screen, image, img_pos):
     screen.blit(img, img_pos)
 
 
-
-
 class PAT_simple:
 
     def __init__(self, position):
@@ -131,7 +145,7 @@ class PAT_simple:
             if image is not None:
                 insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
             try:
-                file = os.path.join('intents', intent, response_mp3)
+                file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
             except:
@@ -222,9 +236,8 @@ class FAQ_PAT(object):
         self.con.close()
         pygame.mixer.quit()
         pygame.quit()
-        for command in bashStopSnips:
-            process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
-            output, error = process.communicate()
+        stop_snips()
+
         sys.exit()
 
     def on_execute(self):
@@ -238,21 +251,20 @@ class FAQ_PAT(object):
             self.on_render()
         self._on_cleanup()
 
+    def _get_slots(self, intent_message, slot_names=[]):
+        slots = {}
+        for slot in intent_message["slots"]:
+            slots[slot['slotName']] = slot['value']['value']
+        for slot_name in slot_names:
+            if slot_name not in slots.keys():
+                slots[slot_name] = "default"
+        return slots
+
     # --> Sub callback function, one per intent
 
-    def intent_explain(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
-        if len(intent_message.slots.Components) > 0:
-            component = intent_message.slots.Components.first().value
-        else:
-            component = "default"
-        self.play_explain(component)
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
-
-        # if need to speak the execution result by tts
-        # Hermes.publish_start_session_notification(intent_message.site_id,
-        #                                             "explain has been done")
+    def intent_explain(self, intent_message):
+        slots = self._get_slots(intent_message, slot_names=["Components"])
+        self.play_explain(slots["Components"])
 
     def play_explain(self, component):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -263,26 +275,9 @@ class FAQ_PAT(object):
 
         self.PAT.talk_animation(response, intent="explain")
 
-    def intent_purpose(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
-        if len(intent_message.slots.Components) > 0:
-            component = intent_message.slots.Components.first().value
-        else:
-            component = 'default'
-
-        if len(intent_message.slots.People) > 0:
-            people = intent_message.slots.People.first().value
-        else:
-            people = 'default'
-
-        self.play_purpose(component, people)
-
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
-
-        # if need to speak the execution result by tts
-        # Hermes.publish_start_session_notification(intent_message.site_id,
-        #                                             "purpose has been done")
+    def intent_purpose(self, intent_message):
+        slots = self._get_slots(intent_message, slot_names=["Components", "People"])
+        self.play_purpose(slots["Components"], slots["People"])
 
     def play_purpose(self, component, people):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -293,18 +288,12 @@ class FAQ_PAT(object):
 
         self.PAT.talk_animation(response, intent="purpose")
 
-    def intent_availability(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
+    def intent_availability(self, intent_message):
         if len(intent_message.slots.Location) > 0:
             location = intent_message.slots.Location.first().value
         else:
             location = "default"
         self.play_availability(location)
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
-        # if need to speak the execution result by tts
-        # Hermes.publish_start_session_notification(intent_message.site_id,
-        #                                             "availability has been done")
 
     def play_availability(self, location):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -315,12 +304,10 @@ class FAQ_PAT(object):
 
         self.PAT.talk_animation(response, intent="availability")
 
-    def intent_bye(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
+    def intent_bye(self, intent_message):
         self.play_bye()
 
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
+
 
         # if need to speak the execution result by tts
         # Hermes.publish_start_session_notification(intent_message.site_id,
@@ -335,15 +322,8 @@ class FAQ_PAT(object):
         response = rows
         self.PAT.talk_animation(response, intent="bye")
 
-    def intent_hello(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
+    def intent_hello(self, intent_message):
         self.play_hello()
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
-
-        # if need to speak the execution result by tts
-        # Hermes.publish_start_session_notification(intent_message.site_id,
-        #                                             "hello has been done")
 
     def play_hello(self):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -354,18 +334,10 @@ class FAQ_PAT(object):
         self.PAT.talk_animation(response, intent="hello")
 
     def intent_show_menu(self, Hermes, intent_message):
-        # terminate the session first if not continue
-        Hermes.publish_end_session(intent_message.session_id, "")
 
         '''
         Not sure what to do here
         '''
-
-        print(f'[Received] intent: {intent_message.intent.intent_name}')
-
-        # if need to speak the execution result by tts
-        # Hermes.publish_start_session_notification(intent_message.site_id,
-        #                                             "show_menu has been done")
 
     def master_intent_callback(self, Hermes, intent_message):
         '''
@@ -376,19 +348,23 @@ class FAQ_PAT(object):
         :return:
         '''
         coming_intent = intent_message['intent']['intentName']
+        # terminate the session first if not continue
+        Hermes.publish_end_session(intent_message.session_id, "")
 
         if coming_intent == 'explain':
-            self.intent_explain(Hermes, intent_message)
+            self.intent_explain(intent_message)
         elif coming_intent == 'purpose':
-            self.intent_purpose(Hermes, intent_message)
+            self.intent_purpose(intent_message)
         elif coming_intent == 'availability':
-            self.intent_availability(Hermes, intent_message)
+            self.intent_availability(intent_message)
         elif coming_intent == 'hello':
-            self.intent_hello(Hermes, intent_message)
+            self.intent_hello(intent_message)
         elif coming_intent == 'bye':
-            self.intent_bye(Hermes, intent_message)
+            self.intent_bye(intent_message)
         elif coming_intent == 'show_menu':
             self.intent_show_menu(Hermes, intent_message)
+
+        print(f'[Received] intent: {intent_message.intent.intent_name}')
 
     def start_blocking(self):
         '''
