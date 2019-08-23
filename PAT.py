@@ -1,3 +1,26 @@
+# !/usr/bin/env python3
+# encoding: utf-8
+
+import paho.mqtt.client as mqtt
+from sys import platform
+
+if platform == "darwin":
+    # OS X
+    ROOT_DIR = "Users/daucoin/github/PAT_on_Pi"
+else:
+    # Raspberry pi
+    ROOT_DIR = "/home/pi/PAT"
+
+def on_connect(client, userdata, flags, rc):
+    print('Connected')
+    mqtt.subscribe('hermes/intent/#')
+
+
+mqtt = mqtt.Client()
+mqtt.on_connect = on_connect
+mqtt.connect('raspberrypi.local', 1883)
+mqtt.loop_forever()
+
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
 import io
@@ -90,10 +113,10 @@ class PAT_simple:
 
     def __init__(self, position):
         self.screen = ScreenSingleTone()
-        self.gamer_girl = [pygame.image.load(f'PAT/png/frame_{i}_delay-0.2s.png').convert_alpha() for i in range(14)]
+        self.gamer_girl = [pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in range(14)]
         self.frames = self.gamer_girl
         self.position = position
-        self.BG = Background('/Users/daucoin/github/PAT_on_Pi/wise_nebula.png', [0, 0])
+        self.BG = Background(os.path.join(ROOT_DIR, 'wise_nebula.png'), [0, 0])
         self.screen.fill(WHITE)
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
@@ -172,15 +195,15 @@ class FAQ_PAT(object):
 
         self.con = None
         self.cursor = None
+        self.PAT = None
         self.PAT_position = (-200, 100)
-
 
     def on_init(self):
         pygame.init()
         self._display_surf = ScreenSingleTone()
         pygame.mixer.init()
         self.PAT = PAT_simple(self.PAT_position)
-        self.con = sql.connect('PAT_on_pi.db')
+        self.con = sql.connect(os.path.join(ROOT_DIR, 'PAT_on_pi.db'))
         self.cursor = self.con.cursor()
         self._running = True
 
@@ -215,7 +238,6 @@ class FAQ_PAT(object):
             self.on_render()
         self._on_cleanup()
 
-
     # --> Sub callback function, one per intent
 
     def intent_explain(self, Hermes, intent_message):
@@ -229,16 +251,10 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
 
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "explain has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "explain has been done")
 
     def play_explain(self, component):
-        # self.cursor.execute(f"""-- select image, img_x, img_y
-        #                        from explain
-        #                        where component = '{component}'""")
-        #rows = self.cursor.fetchall()
-        #image, img_x, img_y = rows[0]
-
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
                                 from explain_play
                                 where component = '{component}'
@@ -265,16 +281,10 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
 
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "purpose has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "purpose has been done")
 
     def play_purpose(self, component, people):
-        #self.cursor.execute(f"""select image, img_x, img_y
-        #                        from purpose
-        #                        where component = '{component}' and people = '{people}'""")
-        #rows = self.cursor.fetchall()
-        #image, img_x, img_y = rows[0]
-
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
                                 from purpose_play
                                 where component = '{component}' and people = '{people}'
@@ -293,8 +303,8 @@ class FAQ_PAT(object):
         self.play_availability(location)
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "availability has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "availability has been done")
 
     def play_availability(self, location):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -313,34 +323,35 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
 
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "bye has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "bye has been done")
 
     def play_bye(self):
-        self.cursor.execute(f"""select response_text, response_mp3
+        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
                                 from bye
                                 order by rand()
                                 limit 1""")
         rows = self.cursor.fetchall()
-        response_text, response_mp3 = rows[0]
-        self.PAT.talk_animation(response_mp3, intent="bye", text=response_text)
+        response = rows
+        self.PAT.talk_animation(response, intent="bye")
 
     def intent_hello(self, Hermes, intent_message):
         # terminate the session first if not continue
         Hermes.publish_end_session(intent_message.session_id, "")
+        self.play_hello()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
+
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "hello has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "hello has been done")
 
     def play_hello(self):
-        self.cursor.execute(f"""select response_text, response_mp3
+        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
                                 from hello
                                 order by rand()
                                 limit 1""")
-        rows = self.cursor.fetchall()
-        response_text, response_mp3 = rows[0]
-        self.PAT.talk_animation(response_mp3, intent="hello", text=response_text)
+        response = self.cursor.fetchall()
+        self.PAT.talk_animation(response, intent="hello")
 
     def intent_show_menu(self, Hermes, intent_message):
         # terminate the session first if not continue
@@ -353,8 +364,8 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
 
         # if need to speak the execution result by tts
-        Hermes.publish_start_session_notification(intent_message.site_id,
-                                                    "show_menu has been done")
+        # Hermes.publish_start_session_notification(intent_message.site_id,
+        #                                             "show_menu has been done")
 
     def master_intent_callback(self, Hermes, intent_message):
         '''
@@ -364,8 +375,7 @@ class FAQ_PAT(object):
         :param intent_message:
         :return:
         '''
-        coming_intent = intent_message.intent.intent_name
-
+        coming_intent = intent_message['intent']['intentName']
 
         if coming_intent == 'explain':
             self.intent_explain(Hermes, intent_message)
@@ -375,8 +385,6 @@ class FAQ_PAT(object):
             self.intent_availability(Hermes, intent_message)
         elif coming_intent == 'hello':
             self.intent_hello(Hermes, intent_message)
-        elif coming_intent == 'bye':
-            self.intent_bye(Hermes, intent_message)
         elif coming_intent == 'bye':
             self.intent_bye(Hermes, intent_message)
         elif coming_intent == 'show_menu':
