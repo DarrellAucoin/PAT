@@ -214,16 +214,20 @@ class FAQ_PAT(object):
         # get the configuration if needed
         self._running = True
         self._display_surf = None
+        '''
         try:
             from snipsTools import SnipsConfigParser
             self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
         except:
             self.config = None
-
+        '''
+        self.config = None
         self.con = None
         self.cursor = None
         self.PAT = None
         self.PAT_position = (-200, 100)
+        file = 'PAT/intents/explain/AppHolo_00.mp3'
+        play_mp3(file)
 
     def on_init(self):
         pygame.init()
@@ -363,8 +367,7 @@ class FAQ_PAT(object):
         coming_intent = intent_message['intent']['intentName']
         # terminate the session first if not continue
         Hermes.publish_end_session(intent_message.session_id, "")
-        file = 'PAT/intents/explain/AppHolo_00.mp3'
-        play_mp3(file)
+
         print("will this show up?")
         if coming_intent == 'explain':
             self.intent_explain(intent_message)
