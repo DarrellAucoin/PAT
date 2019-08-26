@@ -4,7 +4,6 @@
 # import paho.mqtt.client as mqtt
 
 
-
 # def on_connect(client, userdata, flags, rc):
 #     print('Connected')
 #     mqtt.subscribe('hermes/intent/#')
@@ -24,7 +23,7 @@ import sqlite3 as sql
 import os
 import time
 import sys
-#import pygameMenu
+# import pygameMenu
 import subprocess
 from sys import platform
 
@@ -46,10 +45,12 @@ if platform == "darwin":
                      "brew services start snips-asr",
                      "brew services stop snips-dialogue"]
 
+
     def start_snips():
         for command in bashStartSnips:
             process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
             output, error = process.communicate()
+
 
     def stop_snips():
         for command in bashStopSnips:
@@ -60,12 +61,13 @@ else:
     # Raspberry pi
     ROOT_DIR = "/home/pi/PAT"
 
+
     def start_snips():
         pass
 
+
     def stop_snips():
         pass
-
 
 start_snips()
 
@@ -76,20 +78,21 @@ MQTT_PORT = 1883
 MQTT_ADDR = f"{MQTT_IP_ADDR}:{str(MQTT_PORT)}"
 
 WHITE = (255, 255, 255)
-BLACK = (0, 0 ,0)
-RED = (255, 0 ,0)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 screen_size = (1024, 600)
 
+
 def play_mp3(path):
-    #subprocess.Popen(['mplayer', '-nolirc', '-really-quiet', path]).wait()
+    # subprocess.Popen(['mplayer', '-nolirc', '-really-quiet', path]).wait()
     subprocess.Popen(['mpg123', '-q', path]).wait()
-    #subprocess.Popen(['mpg321', '-q', path]).wait()
+    # subprocess.Popen(['mpg321', '-q', path]).wait()
 
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
-        pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
+        pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
@@ -101,7 +104,8 @@ class ChatBubble(pygame.sprite.Sprite):
         self.screen = ScreenSingleTone()
         self.line_width = 5
         self.bubble_black = pygame.draw.rect(self.screen, BLACK, position + [width] + [height])
-        self.bubble = pygame.draw.rect(self.screen, WHITE, position + [width+self.line_width] + [height+self.line_width])
+        self.bubble = pygame.draw.rect(self.screen, WHITE,
+                                       position + [width + self.line_width] + [height + self.line_width])
         # self.bubble_triangle = pygame.draw.polygon()
         self.font = pygame.font.Font('freesansbold.ttf', 32)
         # self.bubble = pygame.display.set_mode((X, Y))
@@ -133,7 +137,9 @@ class PAT_simple:
 
     def __init__(self, position):
         self.screen = ScreenSingleTone()
-        self.gamer_girl = [pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in range(14)]
+        self.gamer_girl = [
+            pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
+            range(14)]
         self.frames = self.gamer_girl
         self.position = position
         self.BG = Background(os.path.join(ROOT_DIR, 'wise_nebula.png'), [0, 0])
@@ -173,7 +179,7 @@ class PAT_simple:
                     if event.type == song_end:
                         running = False
                         break
-           
+
         self.screen.fill([255, 255, 255])
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
@@ -181,8 +187,6 @@ class PAT_simple:
     def render_frame(self, i):
         self.screen.blit(self.frames[i], self.position)
         pygame.display.update()
-
-
 
 
 class Menu(object):
@@ -196,7 +200,6 @@ class Menu(object):
 
     def show_menu(self):
         pass
-
 
 
 class FAQ_PAT(object):
@@ -221,8 +224,8 @@ class FAQ_PAT(object):
         self.cursor = None
         self.PAT = None
         self.PAT_position = (-200, 100)
-        #file = 'PAT/intents/explain/AppHolo_00.mp3'
-        #play_mp3(file)
+        # file = 'PAT/intents/explain/AppHolo_00.mp3'
+        # play_mp3(file)
 
     def on_init(self):
         pygame.init()
@@ -319,8 +322,6 @@ class FAQ_PAT(object):
     def intent_bye(self, intent_message):
         self.play_bye()
 
-
-
         # if need to speak the execution result by tts
         # Hermes.publish_start_session_notification(intent_message.site_id,
         #                                             "bye has been done")
@@ -364,17 +365,17 @@ class FAQ_PAT(object):
         Hermes.publish_end_session(intent_message.session_id, "")
 
         print("will this show up?")
-        if coming_intent == 'explain':
+        if coming_intent == 'Explain':
             self.intent_explain(intent_message)
-        elif coming_intent == 'purpose':
+        elif coming_intent == 'Purpose':
             self.intent_purpose(intent_message)
-        elif coming_intent == 'availability':
+        elif coming_intent == 'Availability':
             self.intent_availability(intent_message)
         elif coming_intent == 'hello':
             self.intent_hello(intent_message)
         elif coming_intent == 'bye':
             self.intent_bye(intent_message)
-        elif coming_intent == 'show_menu':
+        elif coming_intent == 'Show_Menu':
             self.intent_show_menu(Hermes, intent_message)
 
         print(f'[Received] intent: {intent_message.intent.intent_name}')
