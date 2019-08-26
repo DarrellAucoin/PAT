@@ -43,6 +43,7 @@ def action_wrapper(hermes, intentMessage, conf):
 
 
 if __name__ == "__main__":
+    print("fuck")
     mqtt_opts = MqttOptions()
     with Hermes(mqtt_options=mqtt_opts) as h:
         h.subscribe_intent("{{intent_id}}", subscribe_intent_callback) \
