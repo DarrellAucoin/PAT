@@ -142,6 +142,8 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
+        pass
+        '''
         pygame.mixer.fadeout(0.25)
         song_end = pygame.USEREVENT + 1
         start_time = time.time()
@@ -149,8 +151,7 @@ class PAT_simple:
         for response_text, response_mp3, actions, image, img_x, img_y in response:
             running = True
             file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
-            play_mp3(file)
-            '''
+            #play_mp3(file)
             if image is not None:
                 insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
             try:
@@ -176,10 +177,11 @@ class PAT_simple:
                     if event.type == song_end:
                         running = False
                         break
-            '''
+           
         self.screen.fill([255, 255, 255])
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
+        '''
 
     def render_frame(self, i):
         self.screen.blit(self.frames[i], self.position)

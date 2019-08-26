@@ -18,3 +18,5 @@ fi
 . $VENV/bin/activate
 
 pip3 install -r requirements.txt
+
+sudo chmod +x /var/lib/snips/skills/PAT/action-app_template.py
