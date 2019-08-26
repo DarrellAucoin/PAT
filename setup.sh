@@ -1,6 +1,6 @@
 #/usr/bin/env bash -e
 
-VENV=venv
+VENV=PATenv
 
 if [ ! -d "$VENV" ]
 then
