@@ -1,0 +1,4 @@
+hermes-python>=0.1
+io
+pygame
+sqlite3
