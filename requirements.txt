@@ -1,4 +1,3 @@
 hermes-python>=0.1
-pygame
-sqlite3
+pygame>=1.9.6
 pygame-menu>=2.0.4
