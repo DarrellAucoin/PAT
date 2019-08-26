@@ -148,6 +148,9 @@ class PAT_simple:
         i = 0
         for response_text, response_mp3, actions, image, img_x, img_y in response:
             running = True
+            file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
+            play_mp3(file)
+            '''
             if image is not None:
                 insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
             try:
@@ -173,6 +176,7 @@ class PAT_simple:
                     if event.type == song_end:
                         running = False
                         break
+            '''
         self.screen.fill([255, 255, 255])
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
