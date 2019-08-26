@@ -81,6 +81,12 @@ RED = (255, 0 ,0)
 
 screen_size = (1024, 600)
 
+def play_mp3(path):
+    #subprocess.Popen(['mplayer', '-nolirc', '-really-quiet', path]).wait()
+    subprocess.Popen(['mpg123', '-q', path]).wait()
+    #subprocess.Popen(['mpg321', '-q', path]).wait()
+
+
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  #call Sprite initializer
@@ -146,6 +152,7 @@ class PAT_simple:
                 insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
             try:
                 file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
+                play_mp3(file)
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
             except:
