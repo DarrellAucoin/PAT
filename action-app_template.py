@@ -363,7 +363,7 @@ class FAQ_PAT(object):
         coming_intent = intent_message['intent']['intentName']
         # terminate the session first if not continue
         Hermes.publish_end_session(intent_message.session_id, "")
-
+        print("will this show up?")
         if coming_intent == 'explain':
             self.intent_explain(intent_message)
         elif coming_intent == 'purpose':
