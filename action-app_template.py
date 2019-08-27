@@ -8,6 +8,8 @@ from hermes_python.ontology import *
 import io
 import os
 import subprocess
+import PIL
+from PIL import images
 import pygame
 import time
 import pandas as pd
@@ -349,8 +351,8 @@ if __name__ == "__main__":
         screen_on = True
     if "DEBUG" in sys.argv:
         DEBUG = True
-    PAT_avatar = Template(screen_on=screen_on)
     with Hermes(MQTT_ADDR) as h:
+        PAT_avatar = Template(screen_on=screen_on)
         h.subscribe_intents(PAT_avatar.master_intent_callback).start()
     # PAT_avatar = Template()
     # print("start Talking")
