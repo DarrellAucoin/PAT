@@ -79,7 +79,7 @@ class PAT_simple:
 
     def talk_animation(self, response, intent="explain"):
         print("in talk_animation")
-        response = response["response_text", "response_mp3", "actions", "image", "img_x", "img_y"]
+        response = response["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]
         self.start_time = time.time()
 
         if self.pygame_initalized:
