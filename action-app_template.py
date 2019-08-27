@@ -51,19 +51,18 @@ def insert_image(screen, image, img_pos):
 class PAT_simple:
 
     def __init__(self, position):
-        if not DEBUG:
-            self.screen = ScreenSingleTone()
-            self.gamer_girl = [
-                pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
-                range(14)]
-            self.frames = self.gamer_girl
-            self.position = position
-            self.BG = Background(os.path.join(ROOT_DIR, 'wise_nebula.png'), [0, 0])
-            self.screen.fill(WHITE)
-            self.screen.blit(self.BG.image, self.BG.rect)
-            self.render_frame(0)
-            self.frame_i = 0
-            self.start_time = time.time()
+        self.screen = ScreenSingleTone()
+        self.gamer_girl = [
+            pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
+            range(14)]
+        self.frames = self.gamer_girl
+        self.position = position
+        self.BG = Background(os.path.join(ROOT_DIR, 'wise_nebula.png'), [0, 0])
+        self.screen.fill(WHITE)
+        self.screen.blit(self.BG.image, self.BG.rect)
+        self.render_frame(0)
+        self.frame_i = 0
+        self.start_time = time.time()
 
     def talk_animation(self, response, intent="explain"):
         if DEBUG:
@@ -162,9 +161,11 @@ class Template(object):
 
     def intent_explain(self, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
+        print("slots:", slots)
         self.play_explain(slots["Components"])
 
     def play_explain(self, component):
+        print("will this show up?")
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
                                 from explain_play
                                 where component = '{component}'
@@ -241,7 +242,7 @@ class Template(object):
         print("coming_intent:", intent_message)
         coming_intent = intent_message.intent.intent_name
 
-        print("will this show up?")
+
         if coming_intent == 'Explain':
             self.intent_explain(intent_message)
         elif coming_intent == 'Purpose':
