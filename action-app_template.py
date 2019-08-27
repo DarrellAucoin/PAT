@@ -81,6 +81,7 @@ class PAT_simple:
                 insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
             try:
                 file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
+                print("file", file)
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
             except:
