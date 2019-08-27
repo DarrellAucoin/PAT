@@ -146,11 +146,9 @@ class Template(object):
         self._running = True
         # start listening to MQTT
         self.start_blocking()
-        if not DEBUG:
-            pygame.init()
-            self._display_surf = ScreenSingleTone()
-            pygame.mixer.init()
+        self._display_surf = ScreenSingleTone()
         self.PAT = PAT_simple(self.PAT_position)
+        print("end of __init__ of Template")
 
 
     def _get_slots(self, intent_message, slot_names=[]):
