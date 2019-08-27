@@ -342,6 +342,7 @@ class Template(object):
 
 if __name__ == "__main__":
     screen_on = False
+    print(sys.argv)
     if len(sys.argv) > 1 and sys.argv[1] == "screen":
         print("before initialization of pygame")
         pygame.init()
