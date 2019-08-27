@@ -229,12 +229,8 @@ class Template(object):
     '''
 
     def _get_tables(self):
-        con = sql.connect(os.path.join(ROOT_DIR, 'PAT_on_pi.db'))
-        cursor = con.cursor()
-        print("connected to SQL")
         for intent in self.intents:
-            self.tables[intent] = pd.read_sql_table(f"{intent.lower()}_play", con=con)
-        con.close()
+            self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
 
     def intent_explain(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
