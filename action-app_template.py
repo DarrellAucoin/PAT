@@ -166,11 +166,11 @@ class Template(object):
             print("v:", dir(v))
             print("v:", v)
             for val in v:
-                print(val)
+                print(dir(val))
             # print(slot.slotName)
             print("slot type:")
             # print(slot, type(slot))
-            slots[slot_name] = v.first()
+            slots[slot_name] = v[-1].value
             print(slots)
         for slot_name in slot_names:
             if slot_name not in slots.keys():
