@@ -337,6 +337,7 @@ class Template(object):
         with Hermes(MQTT_ADDR) as h:
             h.subscribe_intents(self.master_intent_callback).start()
 
+
 if __name__ == "__main__":
     screen_on = False
     print(sys.argv)
@@ -346,6 +347,8 @@ if __name__ == "__main__":
         pygame.mixer.init()
         print("after initialization of pygame")
         screen_on = True
+    if "DEBUG" in sys.argv:
+        DEBUG = True
     PAT_avatar = Template(screen_on=screen_on)
     with Hermes(MQTT_ADDR) as h:
         h.subscribe_intents(PAT_avatar.master_intent_callback).start()
