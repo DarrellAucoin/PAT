@@ -79,7 +79,7 @@ class PAT_simple:
 
     def talk_animation(self, response, intent="explain"):
         print("in talk_animation")
-        response = response["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]
+        response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
         self.start_time = time.time()
 
         if self.pygame_initalized:
@@ -100,8 +100,7 @@ class PAT_simple:
                 pygame.mixer.music.play()
                 self.screen.fill(WHITE)
                 self.screen.blit(self.BG.image, self.BG.rect)
-                self.render_frame(i)
-                self.frame_i = 0
+                self.render_frame(self.frame_i)
                 while running:
                     events = pygame.event.get()
                     # for event in pygame.event.get():
