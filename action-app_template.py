@@ -134,8 +134,8 @@ class Template(object):
         except :
             self.config = None
         '''
-        pygame.init()
-        pygame.mixer.init()
+        print("In __init__ of Template")
+
         self.config = None
         self.con = None
         self.cursor = None
@@ -269,4 +269,8 @@ class Template(object):
             h.subscribe_intents(self.master_intent_callback).start()
 
 if __name__ == "__main__":
+    print("before initialization of pygame")
+    pygame.init()
+    pygame.mixer.init()
+    print("after initialization of pygame")
     Template()
