@@ -171,6 +171,8 @@ class Template(object):
             print("slot type:")
             # print(slot, type(slot))
             slots[slot_name] = v[-1].slot_value
+            # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
+            # slot_value
             print(slots)
         for slot_name in slot_names:
             if slot_name not in slots.keys():
