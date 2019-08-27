@@ -163,11 +163,9 @@ class Template(object):
         self.pygame_initalized = screen_on
         if self.pygame_initalized:
             self._display_surf = ScreenSingleTone()
-            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
 
-        print("end of __init__ of Template1")
-
-        print("end of __init__ of Template2")
+        self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
+        print("end of __init__ of Template")
 
 
     def _get_slots(self, intent_message, slot_names=[]):
@@ -343,7 +341,7 @@ class Template(object):
 if __name__ == "__main__":
     screen_on = False
     print(sys.argv)
-    if len(sys.argv) > 1 and sys.argv[1] == "screen":
+    if len(sys.argv) > 1 and "screen" in sys.argv:
         print("before initialization of pygame")
         pygame.init()
         pygame.mixer.init()
