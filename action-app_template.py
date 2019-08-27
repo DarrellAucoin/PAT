@@ -240,10 +240,10 @@ class Template(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self,hermes, intent_message):
-        print("coming_intent:", intent_message)
+
         coming_intent = intent_message.intent.intent_name
         coming_intent = coming_intent.split(":")[0]
-
+        print("coming_intent:", coming_intent)
         if coming_intent == 'Explain':
             self.intent_explain(intent_message)
         elif coming_intent == 'Purpose':
