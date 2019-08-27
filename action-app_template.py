@@ -44,9 +44,11 @@ class ScreenSingleTone(object):
             pygame.display.set_caption('PAT')
         return ScreenSingleTone.__instance
 
+
 def insert_image(screen, image, img_pos):
     img = pygame.image.load(image)
     screen.blit(img, img_pos)
+
 
 class PAT_simple:
 
@@ -155,7 +157,7 @@ class Template(object):
 
     def _get_slots(self, intent_message, slot_names=[]):
         slots = {}
-        for slot in intent_message["slots"]:
+        for slot in intent_message.slots:
             slots[slot['slotName']] = slot['value']['value']
         for slot_name in slot_names:
             if slot_name not in slots.keys():
