@@ -274,4 +274,6 @@ if __name__ == "__main__":
     pygame.mixer.init()
     print("after initialization of pygame")
     PAT_avatar = Template()
+    print("start Talking")
     PAT_avatar.start_blocking()
+    print("end blocking")
