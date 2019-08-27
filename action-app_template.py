@@ -161,6 +161,9 @@ class Template(object):
         print("slots dir:", dir(intent_message.slots))
         print("intents dir:", dir(intent_message.intent))
         for slot in intent_message.slots:
+            for k, v in slot.items():
+                print("k:", k)
+                print("v:", v)
             # print(slot.slotName)
             print("slot type:")
             print(slot, type(slot))
