@@ -149,7 +149,7 @@ class Template(object):
         self._display_surf = ScreenSingleTone()
         self.PAT = PAT_simple(self.PAT_position)
         print("end of __init__ of Template1")
-        self.start_blocking()
+
         print("end of __init__ of Template2")
 
 
@@ -273,4 +273,5 @@ if __name__ == "__main__":
     pygame.init()
     pygame.mixer.init()
     print("after initialization of pygame")
-    Template()
+    PAT_avatar = Template()
+    PAT_avatar.start_blocking()
