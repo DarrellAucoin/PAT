@@ -11,6 +11,7 @@ import os
 import subprocess
 import pygame
 import time
+import pandas as pd
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -21,7 +22,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 screen_size = (1024, 600)
-DEBUG = True
+DEBUG = False
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
@@ -67,6 +68,7 @@ class PAT_simple:
         self.start_time = time.time()
 
     def talk_animation(self, response, intent="explain"):
+        response = response["response_text", "response_mp3", "actions", "image", "img_x", "img_y"]
         if DEBUG:
             _, response_mp3, __, ___, ____, _____ = response[0]
             file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
@@ -75,14 +77,15 @@ class PAT_simple:
         pygame.mixer.fadeout(0.25)
         self.start_time = time.time()
         i = 0
-        for response_text, response_mp3, actions, image, img_x, img_y in response:
+        for index, row in response.iterrows():
             song_end = pygame.USEREVENT + 1
             running = True
-            #file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
-            if image is not None:
-                insert_image(screen=self.screen, image=image, img_pos=(img_x, img_y))
+            image = row["image"]
+            print("image:", image)
+            if image is not None and type(image) == str:
+                insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
             try:
-                file = os.path.join(ROOT_DIR, 'intents', intent, response_mp3)
+                file = os.path.join(ROOT_DIR, 'intents', intent, row["response_mp3"])
                 print("file", file)
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
@@ -143,13 +146,13 @@ class Template(object):
         self.cursor = None
         self.PAT = None
         self.PAT_position = (-200, 100)
-        self.con = sql.connect(os.path.join(ROOT_DIR, 'PAT_on_pi.db'))
-        self.cursor = self.con.cursor()
-        print("connected to SQL")
+        self.tables={}
+        self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
         # start listening to MQTT
         self._display_surf = ScreenSingleTone()
         self.PAT = PAT_simple(self.PAT_position)
+        self._get_tables()
         print("end of __init__ of Template1")
 
         print("end of __init__ of Template2")
@@ -225,6 +228,14 @@ class Template(object):
 }
     '''
 
+    def _get_tables(self):
+        con = sql.connect(os.path.join(ROOT_DIR, 'PAT_on_pi.db'))
+        cursor = con.cursor()
+        print("connected to SQL")
+        for intent in self.intents:
+            self.tables[intent] = pd.read_sql_table(f"{intent.lower()}_play", con=con)
+        con.close()
+
     def intent_explain(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
         print("slots:", slots)
@@ -233,11 +244,7 @@ class Template(object):
 
     def play_explain(self, component):
         print("will this show up?")
-        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
-                                from explain_play
-                                where component = '{component}'
-                                order by play_order asc""")
-        response = self.cursor.fetchall()
+        response = self.tables["Explain"][self.tables["Explain"]["component"] == component].sort_values(by=["play_order"])
 
         self.PAT.talk_animation(response, intent="explain")
 
@@ -247,12 +254,8 @@ class Template(object):
         hermes.publish_end_session(intent_message.session_id, "")
 
     def play_purpose(self, component, people):
-        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
-                                from purpose_play
-                                where component = '{component}' and people = '{people}'
-                                order by play_order asc""")
-        response = self.cursor.fetchall()
-
+        response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
+                                          self.tables["Purpose"]["people"] == people].sort_values(by=["play_order"])
         self.PAT.talk_animation(response, intent="purpose")
 
     def intent_availability(self, hermes, intent_message):
@@ -264,13 +267,11 @@ class Template(object):
         hermes.publish_end_session(intent_message.session_id, "")
 
     def play_availability(self, location):
-        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
-                                from availability_play
-                                where location = '{location}'
-                                order by play_order asc""")
+        response = self.tables["Availability"][self.tables["Availability"]["location"] \
+                                               == location].sort_values(by=["play_order"])
         response = self.cursor.fetchall()
 
-        self.PAT.talk_animation(response, intent="availability")
+        self.PAT.talk_animation(response, intent="Availability")
 
     def intent_bye(self, hermes, intent_message):
         self.play_bye()
@@ -281,25 +282,16 @@ class Template(object):
         #                                             "bye has been done")
 
     def play_bye(self):
-        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
-                                from bye
-                                order by rand()
-                                limit 1""")
-        rows = self.cursor.fetchall()
-        response = rows
-        self.PAT.talk_animation(response, intent="bye")
+        pass
+        # self.PAT.talk_animation(response, intent="bye")
 
     def intent_hello(self, hermes, intent_message):
         self.play_hello()
         hermes.publish_end_session(intent_message.session_id, "")
 
     def play_hello(self):
-        self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
-                                from hello
-                                order by rand()
-                                limit 1""")
-        response = self.cursor.fetchall()
-        self.PAT.talk_animation(response, intent="hello")
+        pass
+        # self.PAT.talk_animation(response, intent="hello")
 
     def intent_show_menu(self, hermes, intent_message):
         pass
