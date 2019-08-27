@@ -143,12 +143,14 @@ class Template(object):
         self.PAT_position = (-200, 100)
         self.con = sql.connect(os.path.join(ROOT_DIR, 'PAT_on_pi.db'))
         self.cursor = self.con.cursor()
+        print("connected to SQL")
         self._running = True
         # start listening to MQTT
-        self.start_blocking()
         self._display_surf = ScreenSingleTone()
         self.PAT = PAT_simple(self.PAT_position)
-        print("end of __init__ of Template")
+        print("end of __init__ of Template1")
+        self.start_blocking()
+        print("end of __init__ of Template2")
 
 
     def _get_slots(self, intent_message, slot_names=[]):
