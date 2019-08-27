@@ -158,7 +158,7 @@ class Template(object):
     def _get_slots(self, intent_message, slot_names=[]):
         slots = {}
         print("slots:", intent_message.slots)
-        for item in intent_message:
+        for item in intent_message.keys():
             print(item)
         for slot in intent_message.slots:
             print(slot.slotName)
