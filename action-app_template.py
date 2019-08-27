@@ -242,7 +242,7 @@ class Template(object):
     def master_intent_callback(self,hermes, intent_message):
 
         coming_intent = intent_message.intent.intent_name
-        coming_intent = coming_intent.split(":")[0]
+        coming_intent = coming_intent.split(":")[1]
         print("coming_intent:", coming_intent)
         if coming_intent == 'Explain':
             self.intent_explain(intent_message)
