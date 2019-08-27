@@ -170,7 +170,7 @@ class Template(object):
             # print(slot.slotName)
             print("slot type:")
             # print(slot, type(slot))
-            slots[slot_name] = v[-1].value
+            slots[slot_name] = v[-1].slot_value
             print(slots)
         for slot_name in slot_names:
             if slot_name not in slots.keys():
