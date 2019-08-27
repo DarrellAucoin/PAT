@@ -115,7 +115,7 @@ class PAT_simple:
                                 break
             elif DEBUG:
                 play_mp3(file)
-                time.sleep(3.0)
+                # time.sleep(3.0)
 
         if self.pygame_initalized:
             self.screen.fill(WHITE)
