@@ -22,7 +22,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 screen_size = (1024, 600)
-DEBUG = False
+DEBUG = True
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
@@ -68,6 +68,7 @@ class PAT_simple:
         self.start_time = time.time()
 
     def talk_animation(self, response, intent="explain"):
+        print("in talk_animation")
         response = response["response_text", "response_mp3", "actions", "image", "img_x", "img_y"]
         if DEBUG:
             _, response_mp3, __, ___, ____, _____ = response[0]
@@ -232,6 +233,7 @@ class Template(object):
         print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
+            print(self.tables[intent])
         print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
