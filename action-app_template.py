@@ -241,7 +241,7 @@ class Template(object):
 
 
     # --> Master callback function, triggered everytime an intent is recognized
-    def master_intent_callback(self,hermes, intent_message):
+    def master_intent_callback(self, hermes, intent_message):
 
         coming_intent = intent_message.intent.intent_name
         coming_intent = coming_intent.split(":")[1]
@@ -269,11 +269,15 @@ class Template(object):
             h.subscribe_intents(self.master_intent_callback).start()
 
 if __name__ == "__main__":
-    print("before initialization of pygame")
-    pygame.init()
-    pygame.mixer.init()
-    print("after initialization of pygame")
+    if not DEBUG:
+        print("before initialization of pygame")
+        pygame.init()
+        pygame.mixer.init()
+        print("after initialization of pygame")
     PAT_avatar = Template()
-    print("start Talking")
-    PAT_avatar.start_blocking()
-    print("end blocking")
+    with Hermes(MQTT_ADDR) as h:
+        h.subscribe_intents(PAT_avatar.master_intent_callback).start()
+    # PAT_avatar = Template()
+    # print("start Talking")
+    # PAT_avatar.start_blocking()
+    # print("end blocking")
