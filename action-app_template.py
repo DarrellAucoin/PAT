@@ -159,6 +159,7 @@ class Template(object):
         slots = {}
         print("slots:", intent_message.slots)
         for slot in intent_message.slots:
+            print(slot.slotName)
             print("slot type:")
             print(slot, type(slot))
             slots[slot['slotName']] = slot['value']['value']
@@ -166,6 +167,49 @@ class Template(object):
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
         return slots
+
+
+    '''
+    {
+  "input": "Give me the weather in Paris today please",
+  "intent": {
+    "intentName": "SearchWeatherForecast",
+    "probability": 0.8302662399999999
+  },
+  "slots": [
+    {
+      "entity": "locality",
+      "slotName": "weatherForecastLocality",
+      "rawValue": "Paris",
+      "value": {
+        "kind": "Custom",
+        "value": "Paris"
+      },
+      "range": {
+        "start": 23,
+        "end": 28
+      }
+    },
+    {
+      "entity": "snips/datetime",
+      "slotName": "weatherForecastStartDatetime",
+      "rawValue": "today",
+      "value": {
+        "kind": "InstantTime",
+        "value": {
+          "grain": "Day",
+          "precision": "Exact",
+          "value": "2017-06-13 00:00:00 +00:00"
+        }
+      },
+      "range": {
+        "start": 29,
+        "end": 34
+      }
+    }
+  ]
+}
+    '''
 
     def intent_explain(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
