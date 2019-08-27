@@ -21,7 +21,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 screen_size = (1024, 600)
-DEBUG = False
+DEBUG = True
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
@@ -40,8 +40,8 @@ class ScreenSingleTone(object):
     def __new__(cls):
         if ScreenSingleTone.__instance is None:
             ScreenSingleTone.__instance = object.__new__(cls)
-        ScreenSingleTone.__instance = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
-        pygame.display.set_caption('PAT')
+            ScreenSingleTone.__instance = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+            pygame.display.set_caption('PAT')
         return ScreenSingleTone.__instance
 
 def insert_image(screen, image, img_pos):
