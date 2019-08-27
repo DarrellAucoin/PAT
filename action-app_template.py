@@ -134,6 +134,8 @@ class Template(object):
         except :
             self.config = None
         '''
+        pygame.init()
+        pygame.mixer.init()
         self.config = None
         self.con = None
         self.cursor = None
