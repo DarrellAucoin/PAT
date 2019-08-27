@@ -22,7 +22,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 screen_size = (1024, 600)
-DEBUG = False
+DEBUG = True
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
@@ -330,6 +330,8 @@ class Template(object):
             h.subscribe_intents(self.master_intent_callback).start()
 
 if __name__ == "__main__":
+    pygame.init()
+    pygame.mixer.init()
     if not DEBUG:
         print("before initialization of pygame")
         pygame.init()
