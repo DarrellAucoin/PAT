@@ -173,7 +173,7 @@ class Template(object):
             print("attributes of slot_value", dir(v[-1].slot_value))
             # Attributes of slot_value: from_c_repr, value, value_type
             print("attributes of slot_value.value", dir(v[-1].slot_value.value))
-            slots[slot_name] = v[-1].slot_value.value
+            slots[slot_name] = v[-1].slot_value.value.value
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
             print(slots)
