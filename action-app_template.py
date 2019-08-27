@@ -170,7 +170,8 @@ class Template(object):
             # print(slot.slotName)
             print("slot type:")
             # print(slot, type(slot))
-            slots[slot_name] = v['value']['value']
+            slots[slot_name] = v.first()
+            print(slots)
         for slot_name in slot_names:
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
