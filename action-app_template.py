@@ -163,11 +163,13 @@ class Template(object):
         for k, v in intent_message.slots.items():
             # for k, v in slot.items():
             print("k:", k)
-            print("v:", v)
+            print("v:", dir(v))
+            for key, val in v.items():
+                print(key, val)
             # print(slot.slotName)
             print("slot type:")
             # print(slot, type(slot))
-            # slots[slot['slotName']] = slot['value']['value']
+            slots[v['slotName']] = v['value']['value']
         for slot_name in slot_names:
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
