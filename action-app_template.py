@@ -162,10 +162,11 @@ class Template(object):
                 slots[slot_name] = "default"
         return slots
 
-    def intent_explain(self, intent_message):
+    def intent_explain(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
         print("slots:", slots)
         self.play_explain(slots["Components"])
+        hermes.publish_end_session(intent_message.session_id, "")
 
     def play_explain(self, component):
         print("will this show up?")
@@ -177,9 +178,10 @@ class Template(object):
 
         self.PAT.talk_animation(response, intent="explain")
 
-    def intent_purpose(self, intent_message):
+    def intent_purpose(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
         self.play_purpose(slots["Components"], slots["People"])
+        hermes.publish_end_session(intent_message.session_id, "")
 
     def play_purpose(self, component, people):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -190,12 +192,13 @@ class Template(object):
 
         self.PAT.talk_animation(response, intent="purpose")
 
-    def intent_availability(self, intent_message):
+    def intent_availability(self, hermes, intent_message):
         if len(intent_message.slots.Location) > 0:
             location = intent_message.slots.Location.first().value
         else:
             location = "default"
         self.play_availability(location)
+        hermes.publish_end_session(intent_message.session_id, "")
 
     def play_availability(self, location):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -206,8 +209,9 @@ class Template(object):
 
         self.PAT.talk_animation(response, intent="availability")
 
-    def intent_bye(self, intent_message):
+    def intent_bye(self, hermes, intent_message):
         self.play_bye()
+        hermes.publish_end_session(intent_message.session_id, "")
 
         # if need to speak the execution result by tts
         # Hermes.publish_start_session_notification(intent_message.site_id,
@@ -222,8 +226,9 @@ class Template(object):
         response = rows
         self.PAT.talk_animation(response, intent="bye")
 
-    def intent_hello(self, intent_message):
+    def intent_hello(self, hermes, intent_message):
         self.play_hello()
+        hermes.publish_end_session(intent_message.session_id, "")
 
     def play_hello(self):
         self.cursor.execute(f"""select response_text, response_mp3, actions, image, img_x, img_y
@@ -233,11 +238,12 @@ class Template(object):
         response = self.cursor.fetchall()
         self.PAT.talk_animation(response, intent="hello")
 
-    def intent_show_menu(self, Hermes, intent_message):
+    def intent_show_menu(self, hermes, intent_message):
         pass
         '''
         Not sure what to do here
         '''
+        hermes.publish_end_session(intent_message.session_id, "")
 
 
     # --> Master callback function, triggered everytime an intent is recognized
@@ -247,19 +253,19 @@ class Template(object):
         coming_intent = coming_intent.split(":")[1]
         print("coming_intent:", coming_intent)
         if coming_intent == 'Explain':
-            self.intent_explain(intent_message)
+            self.intent_explain(hermes, intent_message)
         elif coming_intent == 'Purpose':
-            self.intent_purpose(intent_message)
+            self.intent_purpose(hermes, intent_message)
         elif coming_intent == 'Availability':
-            self.intent_availability(intent_message)
+            self.intent_availability(hermes, intent_message)
         elif coming_intent == 'hello':
-            self.intent_hello(intent_message)
+            self.intent_hello(hermes, intent_message)
         elif coming_intent == 'bye':
-            self.intent_bye(intent_message)
+            self.intent_bye(hermes, intent_message)
         elif coming_intent == 'Show_Menu':
-            self.intent_show_menu(Hermes, intent_message)
+            self.intent_show_menu(hermes, intent_message)
         # terminate the session first if not continue
-        hermes.publish_end_session(intent_message.session_id, "")
+
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # more callback and if condition goes here...
 
