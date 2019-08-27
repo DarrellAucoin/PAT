@@ -159,6 +159,8 @@ class Template(object):
         slots = {}
         print("slots:", intent_message.slots)
         for slot in intent_message.slots:
+            print("slot type:")
+            print(slot, type(slot))
             slots[slot['slotName']] = slot['value']['value']
         for slot_name in slot_names:
             if slot_name not in slots.keys():
