@@ -120,8 +120,8 @@ class PAT_simple:
                     img = Image.open(image)
                     img.show()
                 play_mp3(file)
-                if image is not None and type(image) == str:
-                    img.close()
+                # if image is not None and type(image) == str:
+                #     img.close()
                 # time.sleep(3.0)
 
         if self.pygame_initalized:
