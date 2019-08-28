@@ -191,7 +191,7 @@ class Template(object):
         print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
-            print(self.tables[intent])
+            print(self.tables[intent].columns)
         print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
