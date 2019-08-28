@@ -26,8 +26,10 @@ RED = (255, 0, 0)
 screen_size = (1024, 600)
 DEBUG = False
 
+
 def play_mp3(path):
-    subprocess.Popen(['mpg123', '-q', path]).wait()
+    # subprocess.Popen(['mpg123', '-q', path]).wait()
+    subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
 
 
 class Background(pygame.sprite.Sprite):
