@@ -28,8 +28,8 @@ DEBUG = False
 
 
 def play_mp3(path):
-    # subprocess.Popen(['mpg123', '-q', path]).wait()
-    subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
+    subprocess.Popen(['mpg123', '-q', path]).wait()
+    # subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
 
 
 class Background(pygame.sprite.Sprite):
