@@ -118,9 +118,15 @@ class PAT_simple:
                                 break
             else:
                 if image is not None and type(image) == str:
-                    img = Image.open(image)
-                    img.show()
-                play_mp3(file)
+                    try:
+                        img = Image.open(image)
+                        img.show()
+                    except:
+                        print("image file not found:", image)
+                try:
+                    play_mp3(file)
+                except:
+                    print("mp3 file not found:", file)
                 if image is not None and type(image) == str:
                     img.close()
                 # time.sleep(3.0)
