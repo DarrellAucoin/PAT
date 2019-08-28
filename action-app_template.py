@@ -81,7 +81,8 @@ class PAT_simple:
 
     def talk_animation(self, response, intent="explain"):
         # print("in talk_animation")
-        response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
+        # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
+        response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
         self.start_time = time.time()
 
         if self.pygame_initalized:
@@ -120,8 +121,8 @@ class PAT_simple:
                     img = Image.open(image)
                     img.show()
                 play_mp3(file)
-                # if image is not None and type(image) == str:
-                #     img.close()
+                if image is not None and type(image) == str:
+                    img.close()
                 # time.sleep(3.0)
 
         if self.pygame_initalized:
@@ -201,7 +202,7 @@ class Template(object):
 
     def play_explain(self, component):
         # print("will this show up?")
-        response = self.tables["Explain"][self.tables["Explain"]["component"] == component].sort_values(by=["play_order"])
+        response = self.tables["Explain"][self.tables["Explain"]["component"] == component]#.sort_values(by=["play_order"])
 
         self.PAT.talk_animation(response, intent="explain")
 
@@ -212,7 +213,7 @@ class Template(object):
 
     def play_purpose(self, component, people):
         response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
-                                          self.tables["Purpose"]["people"] == people].sort_values(by=["play_order"])
+                                          self.tables["Purpose"]["people"] == people]#.sort_values(by=["play_order"])
         self.PAT.talk_animation(response, intent="purpose")
 
     def intent_availability(self, hermes, intent_message):
@@ -225,7 +226,7 @@ class Template(object):
 
     def play_availability(self, location):
         response = self.tables["Availability"][self.tables["Availability"]["location"] \
-                                               == location].sort_values(by=["play_order"])
+                                               == location]#.sort_values(by=["play_order"])
         response = self.cursor.fetchall()
 
         self.PAT.talk_animation(response, intent="Availability")
