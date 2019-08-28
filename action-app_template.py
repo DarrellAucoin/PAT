@@ -152,7 +152,8 @@ class PAT_simple:
                 if image is not None and type(image) == str:
                     try:
                         img = Image.open(image)
-                        showPIL(img)
+                        img.show()
+                        # showPIL(img)
                     except:
                         print("image file not found:", image)
                 try:
