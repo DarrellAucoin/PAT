@@ -36,10 +36,13 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    file = '/home/pi/PAT/intents/explain/AppHolo_00.mp3'
-    play_mp3(file)
+    hermes.publish_end_session(intentMessage.session_id, "")
     #{{#each action_code as |a|}}{{a}}
     #{{/each}}
+    hermes.publish_start_session_notification(intentMessage.site_id, "", "")
+    # file = '/home/pi/PAT/intents/explain/AppHolo_00.mp3'
+    # play_mp3(file)
+
 
 
 if __name__ == "__main__":
