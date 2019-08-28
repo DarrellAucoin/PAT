@@ -342,16 +342,16 @@ class Template(object):
 
 if __name__ == "__main__":
     screen_on = False
-    print(sys.argv)
-    if len(sys.argv) > 1 and "screen" in sys.argv:
-        print("before initialization of pygame")
-        pygame.init()
-        pygame.mixer.init()
-        print("after initialization of pygame")
-        screen_on = True
-    if "DEBUG" in sys.argv:
-        DEBUG = True
+
     with Hermes(MQTT_ADDR) as h:
+        if len(sys.argv) > 1 and "screen" in sys.argv:
+            print("before initialization of pygame")
+            pygame.init()
+            pygame.mixer.init()
+            print("after initialization of pygame")
+            screen_on = True
+        if "DEBUG" in sys.argv:
+            DEBUG = True
         PAT_avatar = Template(screen_on=screen_on)
         h.subscribe_intents(PAT_avatar.master_intent_callback).start()
     # PAT_avatar = Template()
