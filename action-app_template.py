@@ -80,7 +80,7 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
-        print("in talk_animation")
+        # print("in talk_animation")
         response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
         self.start_time = time.time()
 
@@ -93,11 +93,11 @@ class PAT_simple:
             print("image:", image)
             if self.pygame_initalized:
                 song_end = pygame.USEREVENT + 1
-                print("song_end:", song_end)
+                # print("song_end:", song_end)
                 running = True
                 if image is not None and type(image) == str:
                     insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
-                print("file", file)
+                # print("file", file)
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
                 self.screen.fill(WHITE)
@@ -171,94 +171,36 @@ class Template(object):
             self._display_surf = ScreenSingleTone()
 
         self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
-        print("end of __init__ of Template")
+        # print("end of __init__ of Template")
 
 
     def _get_slots(self, intent_message, slot_names=[]):
         slots = {}
-        print("slots:", intent_message.slots)
-        print("slots dir:", dir(intent_message.slots))
-        print("intents dir:", dir(intent_message.intent))
         for slot_name, v in intent_message.slots.items():
-            # for k, v in slot.items():
-            print("k:", slot_name)
-            print("v:", dir(v))
-            print("v:", v)
-            for val in v:
-                print(dir(val))
-            # print(slot.slotName)
-            print("slot type:")
-            # print(slot, type(slot))
-            print("attributes of slot_value", dir(v[-1].slot_value))
             # Attributes of slot_value: from_c_repr, value, value_type
-            print("attributes of slot_value.value", dir(v[-1].slot_value.value))
             slots[slot_name] = v[-1].slot_value.value.value
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
-            print(slots)
         for slot_name in slot_names:
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
         return slots
 
-
-    '''
-    {
-  "input": "Give me the weather in Paris today please",
-  "intent": {
-    "intentName": "SearchWeatherForecast",
-    "probability": 0.8302662399999999
-  },
-  "slots": [
-    {
-      "entity": "locality",
-      "slotName": "weatherForecastLocality",
-      "rawValue": "Paris",
-      "value": {
-        "kind": "Custom",
-        "value": "Paris"
-      },
-      "range": {
-        "start": 23,
-        "end": 28
-      }
-    },
-    {
-      "entity": "snips/datetime",
-      "slotName": "weatherForecastStartDatetime",
-      "rawValue": "today",
-      "value": {
-        "kind": "InstantTime",
-        "value": {
-          "grain": "Day",
-          "precision": "Exact",
-          "value": "2017-06-13 00:00:00 +00:00"
-        }
-      },
-      "range": {
-        "start": 29,
-        "end": 34
-      }
-    }
-  ]
-}
-    '''
-
     def _get_tables(self):
         print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
-            print(self.tables[intent])
-        print("got all tables")
+            # print(self.tables[intent])
+        # print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
         slots = self._get_slots(intent_message, slot_names=["Components"])
-        print("slots:", slots)
+        # print("slots:", slots)
         self.play_explain(slots["Components"])
         hermes.publish_end_session(intent_message.session_id, "")
 
     def play_explain(self, component):
-        print("will this show up?")
+        # print("will this show up?")
         response = self.tables["Explain"][self.tables["Explain"]["component"] == component].sort_values(by=["play_order"])
 
         self.PAT.talk_animation(response, intent="explain")
