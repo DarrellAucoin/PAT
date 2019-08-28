@@ -9,7 +9,7 @@ import io
 import os
 import subprocess
 # import PIL
-# from PIL import images
+from PIL import Image
 import pygame
 import time
 import pandas as pd
@@ -89,12 +89,12 @@ class PAT_simple:
             self.frame_i = 0
         for index, row in response.iterrows():
             file = os.path.join(ROOT_DIR, 'intents', intent, row["response_mp3"])
+            image = os.path.join(ROOT_DIR, "images", row["image"])
+            print("image:", image)
             if self.pygame_initalized:
                 song_end = pygame.USEREVENT + 1
                 print("song_end:", song_end)
                 running = True
-                image = row["image"]
-                print("image:", image)
                 if image is not None and type(image) == str:
                     insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
                 print("file", file)
@@ -115,8 +115,13 @@ class PAT_simple:
                             if event.type == song_end:
                                 running = False
                                 break
-            elif DEBUG:
+            else:
+                if image is not None and type(image) == str:
+                    img = Image.open(image)
+                    img.show()
                 play_mp3(file)
+                if image is not None and type(image) == str:
+                    img.close()
                 # time.sleep(3.0)
 
         if self.pygame_initalized:
@@ -344,7 +349,7 @@ if __name__ == "__main__":
     screen_on = False
 
     with Hermes(MQTT_ADDR) as h:
-        if len(sys.argv) > 1 and "screen" in sys.argv:
+        if len(sys.argv) > 1 and "pygame" in sys.argv:
             print("before initialization of pygame")
             pygame.init()
             pygame.mixer.init()
