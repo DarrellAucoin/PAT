@@ -13,7 +13,8 @@ CONFIG_INI = "config.ini"
 
 def play_mp3(path):
     #subprocess.Popen(['mplayer', '-nolirc', '-really-quiet', path]).wait()
-    subprocess.Popen(['mpg123', '-q', path]).wait()
+    # subprocess.Popen(['mpg123', '-q', path]).wait()
+    subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
     #subprocess.Popen(['mpg321', '-q', path]).wait()
 
 class SnipsConfigParser(configparser.SafeConfigParser):
@@ -39,6 +40,10 @@ def action_wrapper(hermes, intentMessage, conf):
     hermes.publish_end_session(intentMessage.session_id, "")
     #{{#each action_code as |a|}}{{a}}
     #{{/each}}
+
+    file = '/home/pi/PAT/intents/explain/AppHolo_00.mp3'
+    play_mp3(file)
+
     hermes.publish_start_session_notification(intentMessage.site_id, "", "")
     # file = '/home/pi/PAT/intents/explain/AppHolo_00.mp3'
     # play_mp3(file)
