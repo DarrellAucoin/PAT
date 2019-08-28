@@ -260,24 +260,25 @@ class Template(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-
-        coming_intent = intent_message.intent.intent_name
-        coming_intent = coming_intent.split(":")[1]
-        print("coming_intent:", coming_intent)
-        if coming_intent == 'Explain':
-            self.intent_explain(hermes, intent_message)
-        elif coming_intent == 'Purpose':
-            self.intent_purpose(hermes, intent_message)
-        elif coming_intent == 'Availability':
-            self.intent_availability(hermes, intent_message)
-        elif coming_intent == 'hello':
-            self.intent_hello(hermes, intent_message)
-        elif coming_intent == 'bye':
-            self.intent_bye(hermes, intent_message)
-        elif coming_intent == 'Show_Menu':
-            self.intent_show_menu(hermes, intent_message)
-        # terminate the session first if not continue
-
+        try:
+            coming_intent = intent_message.intent.intent_name
+            coming_intent = coming_intent.split(":")[1]
+            print("coming_intent:", coming_intent)
+            if coming_intent == 'Explain':
+                self.intent_explain(hermes, intent_message)
+            elif coming_intent == 'Purpose':
+                self.intent_purpose(hermes, intent_message)
+            elif coming_intent == 'Availability':
+                self.intent_availability(hermes, intent_message)
+            elif coming_intent == 'hello':
+                self.intent_hello(hermes, intent_message)
+            elif coming_intent == 'bye':
+                self.intent_bye(hermes, intent_message)
+            elif coming_intent == 'Show_Menu':
+                self.intent_show_menu(hermes, intent_message)
+            # terminate the session first if not continue
+        except:
+            print("something got caught somewhere")
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # more callback and if condition goes here...
 
