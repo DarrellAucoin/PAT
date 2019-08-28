@@ -201,10 +201,11 @@ class Template(object):
         print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
+        hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components"])
         # print("slots:", slots)
         self.play_explain(slots["Components"])
-        hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_explain(self, component):
         # print("will this show up?")
@@ -213,9 +214,11 @@ class Template(object):
         self.PAT.talk_animation(response, intent="explain")
 
     def intent_purpose(self, hermes, intent_message):
+        hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
         self.play_purpose(slots["Components"], slots["People"])
-        hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+
 
     def play_purpose(self, component, people):
         response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
@@ -223,12 +226,13 @@ class Template(object):
         self.PAT.talk_animation(response, intent="purpose")
 
     def intent_availability(self, hermes, intent_message):
+        hermes.publish_end_session(intent_message.session_id, "")
         if len(intent_message.slots.Location) > 0:
             location = intent_message.slots.Location.first().value
         else:
             location = "default"
         self.play_availability(location)
-        hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_availability(self, location):
         response = self.tables["Availability"][self.tables["Availability"]["location"] \
@@ -238,9 +242,9 @@ class Template(object):
         self.PAT.talk_animation(response, intent="Availability")
 
     def intent_bye(self, hermes, intent_message):
-        self.play_bye()
         hermes.publish_end_session(intent_message.session_id, "")
-
+        self.play_bye()
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # if need to speak the execution result by tts
         # Hermes.publish_start_session_notification(intent_message.site_id,
         #                                             "bye has been done")
@@ -250,19 +254,22 @@ class Template(object):
         # self.PAT.talk_animation(response, intent="bye")
 
     def intent_hello(self, hermes, intent_message):
-        self.play_hello()
         hermes.publish_end_session(intent_message.session_id, "")
+        self.play_hello()
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_hello(self):
         pass
         # self.PAT.talk_animation(response, intent="hello")
 
     def intent_show_menu(self, hermes, intent_message):
-        pass
+        hermes.publish_end_session(intent_message.session_id, "")
+
         '''
         Not sure what to do here
         '''
-        hermes.publish_end_session(intent_message.session_id, "")
+        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        pass
 
 
     # --> Master callback function, triggered everytime an intent is recognized
