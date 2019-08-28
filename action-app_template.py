@@ -8,8 +8,8 @@ from hermes_python.ontology import *
 import io
 import os
 import subprocess
-import PIL
-from PIL import images
+# import PIL
+# from PIL import images
 import pygame
 import time
 import pandas as pd
