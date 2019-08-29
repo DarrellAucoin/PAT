@@ -115,8 +115,9 @@ class PAT_simple:
         print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
-        response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
+        response = response[["response_text", "response_mp3", "mp3_length", "image", "img_x", "img_y"]]
         self.start_time = time.time()
+
         if pygame.get_init():
             try:
                 pygame.mixer.fadeout(0.25)
@@ -124,6 +125,8 @@ class PAT_simple:
                 print("mixer not fading out")
             self.frame_i = 0
         for index, row in response.iterrows():
+            print("type of mp3_length", type(row["mp3_length"]))
+            time_duration = row["mp3_length"] if row["mp3_length"] > 0 else 30.
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             if row["image"] is not None and type(row["image"]) == str:
                 image = os.path.join(ROOT_DIR, "images", row["image"])
@@ -133,8 +136,6 @@ class PAT_simple:
             if pygame.get_init():
                 song_end = pygame.USEREVENT + 1
                 print("song_end:", song_end)
-                running = True
-
                 print("image file", image)
                 print("loading music")
                 pygame.mixer.music.load(file)
@@ -151,18 +152,8 @@ class PAT_simple:
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
                 print("rendering the frame")
-                while running:
-                    events = pygame.event.get()
-                    # for event in pygame.event.get():
+                while time.time() - self.start_time < time_duration:
                     self._animate()
-                    if 0 == len(events):
-                        continue
-                    else:
-                        for event in events:
-                            self._animate()
-                            if event.type == song_end:
-                                running = False
-                                break
             else:
                 if image is not None and type(image) == str:
                     try:
