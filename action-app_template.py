@@ -119,8 +119,6 @@ class PAT_simple:
         # self.start_time = time.time()
         self.frame_i = 0
         for index, row in response.iterrows():
-            print("type of mp3_length", type(row["mp3_length"]))
-            # time_duration = row["mp3_length"] if row["mp3_length"] > 0 else 30.
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             if row["image"] is not None and type(row["image"]) == str:
                 image = os.path.join(ROOT_DIR, "images", row["image"])
@@ -128,15 +126,10 @@ class PAT_simple:
                 image = None
             print("image:", image)
             if pygame.get_init():
-                print("image file", image)
-                print("loading music")
                 pygame.mixer.music.load(file)
-                print("playing music")
                 pygame.mixer.music.play()
-                print('refreshing screen')
                 self.screen.fill(BLACK)
                 self.screen.blit(self.BG.image, self.BG.rect)
-                print("inserting image")
                 if image is not None and type(image) == str:
                     try:
                         img_x = int(row["img_x"])
@@ -148,7 +141,7 @@ class PAT_simple:
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
                 print("rendering the frame")
-                while pygame.mixer.music.get_busy(): #time.time() - self.start_time < time_duration:
+                while pygame.mixer.music.get_busy():
                     self._animate()
             else:
                 if image is not None and type(image) == str:
