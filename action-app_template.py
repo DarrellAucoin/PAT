@@ -131,7 +131,7 @@ class PAT_simple:
             else:
                 image = None
             print("image:", image)
-            if self.pygame.get_init():
+            if pygame.get_init():
                 song_end = pygame.USEREVENT + 1
                 print("song_end:", song_end)
                 running = True
