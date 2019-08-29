@@ -89,6 +89,7 @@ class PAT_simple:
         self.screen = None
         self.gamer_girl = None
         self.frames = None
+        self.screen_on = screen_on
         self.position = position
         self.BG = None
         self.frame_i = 0
@@ -110,7 +111,7 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
-        if not DEBUG:
+        if not self.screen_on:
             return None
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
@@ -333,9 +334,9 @@ class Template(object):
                 self.intent_show_menu(hermes, intent_message)
             # terminate the session first if not continue
             # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-            if pygame.get_init() and self.pygame_initalized:
-                pygame.mixer.quit()
-                pygame.quit()
+            # if pygame.get_init() and self.pygame_initalized:
+            #     pygame.mixer.quit()
+            #     pygame.quit()
         except:
             print("something got caught somewhere")
             if pygame.get_init():
