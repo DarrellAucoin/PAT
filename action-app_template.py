@@ -105,7 +105,7 @@ class PAT_simple:
             range(14)]
         self.frames = self.gamer_girl
         # self.position = position
-        self.BG = Background(os.path.join(ROOT_DIR, 'CSA_logo.png'), [0, 0])
+        self.BG = Background(os.path.join(ROOT_DIR, 'earth.jpg'), [0, 0])
         self.screen.fill(BLACK)
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
