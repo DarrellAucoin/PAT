@@ -196,7 +196,7 @@ class PAT_simple:
             self.render_frame(self.frame_i)
 
     def insert_image(self, image, img_pos):
-        img = pygame.image.load(image).convert_alpha()
+        img = pygame.image.load(image)
         self.screen.blit(img, img_pos)
 
 class Template(object):
@@ -353,7 +353,13 @@ class Template(object):
             # if pygame.get_init() and self.pygame_initalized:
             #     pygame.mixer.quit()
             #     pygame.quit()
-        except:
+        except Exception as inst:
+            print(type(inst))  # the exception instance
+            print(inst.args)  # arguments stored in .args
+            print(inst)  # __str__ allows args to be printed directly,
+            x, y = inst.args  # unpack args
+            print('x =', x)
+            print('y =', y)
             print("something got caught somewhere")
             if pygame.get_init():
                 pygame.mixer.quit()
