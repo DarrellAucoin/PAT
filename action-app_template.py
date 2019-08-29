@@ -194,7 +194,7 @@ class PAT_simple:
             self.render_frame(self.frame_i)
 
     def insert_image(self, image, img_pos):
-        img = pygame.image.load(image)#.convert_alpha()
+        img = pygame.image.load(image).convert_alpha()
         self.screen.blit(img, img_pos)
 
 class Template(object):
