@@ -6,16 +6,42 @@ from hermes_python.hermes import Hermes
 from hermes_python.ffi.utils import MqttOptions
 from hermes_python.ontology import *
 import io
-import os
+from PIL import Image, ImageTk
+import tkinter
 import subprocess
-from PIL import Image
 
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
-ROOT_DIR = "/home/pi/PAT"
+INTENTS_DIR = "/home/pi/PAT/intents/availability"
+IMAGE_DIR = "/home/pi/PAT/images"
+MP3_IMAGE ={"IVATTS:ISS": [(f"{INTENTS_DIR}/IVATTS_ISS_00.mp3", f"{IMAGE_DIR}/International_Space_Station-sim.jpg")]
+            }
+
+def showPIL(pilImage):
+    root = tkinter.Tk()
+    w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+    root.overrideredirect(1)
+    root.geometry("%dx%d+0+0" % (w, h))
+    root.focus_set()
+    root.bind("<Escape>", lambda e: (e.widget.withdraw(), e.widget.quit()))
+    canvas = tkinter.Canvas(root,width=w,height=h)
+    canvas.pack()
+    canvas.configure(background='black')
+    imgWidth, imgHeight = pilImage.size
+    if imgWidth > w or imgHeight > h:
+        ratio = min(w/imgWidth, h/imgHeight)
+        imgWidth = int(imgWidth*ratio)
+        imgHeight = int(imgHeight*ratio)
+        pilImage = pilImage.resize((imgWidth,imgHeight), Image.ANTIALIAS)
+    image = ImageTk.PhotoImage(pilImage)
+    imagesprite = canvas.create_image(w/2,h/2,image=image)
+    root.mainloop()
+
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
+    # subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
+
 
 class SnipsConfigParser(configparser.SafeConfigParser):
     def to_dict(self):
@@ -37,20 +63,11 @@ def subscribe_intent_callback(hermes, intentMessage):
 
 
 def action_wrapper(hermes, intentMessage, conf):
-    mp3_file = row["response_mp3"]
-    image = None
-    file = os.path.join(ROOT_DIR, 'intents', "purpose", mp3_file)
-    if image is not None and type(image) == str:
-        try:
-            img = Image.open(image)
-            img.show()
-        except:
-            print("image file not found:", image)
-    play_mp3(file)
     pass
-    #{{#each action_code as |a|}}{{a}}
-    #{{/each}}
-
+    '''
+    {{#each action_code as |a|}}{{a}}
+    {{/each}}
+    '''
 
 if __name__ == "__main__":
     mqtt_opts = MqttOptions()

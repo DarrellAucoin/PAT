@@ -100,11 +100,18 @@ function onListeningStateChanged(listening) {
 }
 ```
 
-install the following to get the right packages installed (`libblas-common` and `libatlas3-base`):
+If a snips package isn't installed try:
 ```
-sudo apt-get install gdebi
+sudo bash -c 'echo "deb https://raspbian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list'
+sudo apt-get install snips-<package>
 ```
 
 
 Reinstall `node.js`:
+```
+sudo apt-get remove node nodejs nodejs-legacy nodered
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install npm@latest -g
 
+```

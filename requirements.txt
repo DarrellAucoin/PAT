@@ -1,5 +1,5 @@
 hermes-python>=0.1
 pygame>=1.9.6
-pygame-menu>=2.0.4
+# pygame-menu>=2.0.4
 pandas>=0.25
 pillow>=6.1

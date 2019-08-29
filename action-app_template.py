@@ -200,17 +200,17 @@ class Template(object):
 
         self.config = None
         self.PAT = None
-        self.PAT_position = (-200, 100)
         self.tables={}
+        self._display_surf = None
+        self.PAT_position = (-200, 100)
+        self.pygame_initalized = screen_on
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
         # start listening to MQTT
         self._get_tables()
-        self.pygame_initalized = screen_on
-        if self.pygame_initalized:
-            self._display_surf = ScreenSingleTone()
 
-        self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
+
+
         # print("end of __init__ of Template")
 
 
@@ -307,9 +307,17 @@ class Template(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
+        if not pygame.get_init() and self.pygame_initalized:
+            print("before initialization of pygame")
+            pygame.init()
+            pygame.mixer.init()
+            self._display_surf = ScreenSingleTone()
+            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
+            print("after initialization of pygame")
         try:
             coming_intent = intent_message.intent.intent_name
-            coming_intent = coming_intent.split(":")[1]
+            if ':' in coming_intent:
+                coming_intent = coming_intent.split(":")[1]
             print("coming_intent:", coming_intent)
             if coming_intent == 'Explain':
                 self.intent_explain(hermes, intent_message)
@@ -324,6 +332,7 @@ class Template(object):
             elif coming_intent == 'Show_Menu':
                 self.intent_show_menu(hermes, intent_message)
             # terminate the session first if not continue
+            # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         except:
             print("something got caught somewhere")
         print(f'[Received] intent: {intent_message.intent.intent_name}')
@@ -336,14 +345,10 @@ class Template(object):
 
 
 if __name__ == "__main__":
-    screen_on = False
+    screen_on = True
 
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
-            print("before initialization of pygame")
-            pygame.init()
-            pygame.mixer.init()
-            print("after initialization of pygame")
             screen_on = True
         if "DEBUG" in sys.argv:
             DEBUG = True
