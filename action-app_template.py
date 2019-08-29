@@ -364,12 +364,8 @@ if __name__ == "__main__":
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
             screen_on = True
-            pygame.init()
+            # pygame.init()
         if "DEBUG" in sys.argv:
             DEBUG = True
         PAT_avatar = Template(screen_on=screen_on)
         h.subscribe_intents(PAT_avatar.master_intent_callback).start()
-    # PAT_avatar = Template()
-    # print("start Talking")
-    # PAT_avatar.start_blocking()
-    # print("end blocking")
