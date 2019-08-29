@@ -119,10 +119,11 @@ class PAT_simple:
         response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
         print("response table:\n", response)
         self.start_time = time.time()
-
+        print("before fadout")
         if pygame.get_init():
             pygame.mixer.fadeout(0.25)
             self.frame_i = 0
+        print("after fadout")
         for index, row in response.iterrows():
             print("will this show up? 1")
             print("row:", row)
