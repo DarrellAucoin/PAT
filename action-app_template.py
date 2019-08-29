@@ -70,17 +70,16 @@ class Background(pygame.sprite.Sprite):
 class ScreenSingleTone(object):
     __instance = None
 
+
     def __new__(cls):
         if ScreenSingleTone.__instance is None:
-            ScreenSingleTone.__instance = object.__new__(cls)
+            # ScreenSingleTone.__instance = object.__new__(cls)
             ScreenSingleTone.__instance = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
             pygame.display.set_caption('PAT')
         return ScreenSingleTone.__instance
 
 
-def insert_image(screen, image, img_pos):
-    img = pygame.image.load(image)
-    screen.blit(img, img_pos)
+
 
 
 class PAT_simple:
@@ -146,7 +145,7 @@ class PAT_simple:
                 self.screen.blit(self.BG.image, self.BG.rect)
                 print("inserting image")
                 if image is not None and type(image) == str:
-                    insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
+                    self.insert_image(image=image, img_pos=(int(row["img_x"]), int(row["img_y"])))
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
                 print("rendering the frame")
@@ -194,7 +193,9 @@ class PAT_simple:
             self.frame_i = (self.frame_i + 1) % len(self.frames)
             self.render_frame(self.frame_i)
 
-
+    def insert_image(self, image, img_pos):
+        img = pygame.image.load(image)#.convert_alpha()
+        self.screen.blit(img, img_pos)
 
 class Template(object):
     """Class used to wrap action code with mqtt connection
