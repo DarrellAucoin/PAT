@@ -144,9 +144,12 @@ class PAT_simple:
                 print('refreshing screen')
                 self.screen.fill(WHITE)
                 self.screen.blit(self.BG.image, self.BG.rect)
+                print("inserting image")
                 if image is not None and type(image) == str:
                     insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
+                print("finished inserting image")
                 self.render_frame(self.frame_i)
+                print("rendering the frame")
                 while running:
                     events = pygame.event.get()
                     # for event in pygame.event.get():
