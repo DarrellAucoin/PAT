@@ -335,6 +335,9 @@ class Template(object):
             # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         except:
             print("something got caught somewhere")
+            pygame.mixer.quit()
+            pygame.quit()
+            sys.exit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # more callback and if condition goes here...
 
