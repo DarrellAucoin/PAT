@@ -333,10 +333,14 @@ class Template(object):
                 self.intent_show_menu(hermes, intent_message)
             # terminate the session first if not continue
             # hermes.publish_start_session_notification(intent_message.site_id, "", "")
+            if pygame.get_init() and self.pygame_initalized:
+                pygame.mixer.quit()
+                pygame.quit()
         except:
             print("something got caught somewhere")
-            pygame.mixer.quit()
-            pygame.quit()
+            if pygame.get_init():
+                pygame.mixer.quit()
+                pygame.quit()
             sys.exit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # more callback and if condition goes here...
