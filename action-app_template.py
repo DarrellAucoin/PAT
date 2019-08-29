@@ -110,8 +110,8 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
-        if not self.screen_on:
-            return None
+        # if not self.screen_on:
+        #     return None
         print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
@@ -150,8 +150,8 @@ class PAT_simple:
                         img_x = int(row["img_x"])
                         img_y = int(row["img_y"])
                     except:
-                        img_x = 500
-                        img_y = 0
+                        img_x = 0
+                        img_y = 300
                     self.insert_image(image=image, img_pos=(int(img_x), int(img_y)))
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
@@ -174,7 +174,7 @@ class PAT_simple:
                     img.close()
                 # time.sleep(3.0)
 
-        if self.pygame_initalized:
+        if pygame.get_init():
             self.screen.fill(WHITE)
             self.screen.blit(self.BG.image, self.BG.rect)
             self.render_frame(0)
@@ -367,7 +367,7 @@ class Template(object):
 
 
 if __name__ == "__main__":
-    screen_on = False
+    screen_on = True
 
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
