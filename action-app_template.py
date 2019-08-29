@@ -104,7 +104,7 @@ class PAT_simple:
             range(14)]
         self.frames = self.gamer_girl
         # self.position = position
-        self.BG = Background(os.path.join(ROOT_DIR, 'wise_nebula.png'), [0, 0])
+        self.BG = Background(os.path.join(ROOT_DIR, 'CSA_logo.jpg'), [0, 0])
         self.screen.fill(WHITE)
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
@@ -214,7 +214,7 @@ class Template(object):
         self.PAT = None
         self.tables={}
         self._display_surf = None
-        self.PAT_position = (-200, 100)
+        self.PAT_position = (-300, 100)
         self.pygame_initalized = screen_on
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
@@ -371,7 +371,7 @@ class Template(object):
 
 
 if __name__ == "__main__":
-    screen_on = True
+    screen_on = False
 
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
