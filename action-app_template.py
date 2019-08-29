@@ -161,10 +161,11 @@ class PAT_simple:
                 # time.sleep(3.0)
 
         if pygame.get_init():
-            self.screen.fill(WHITE)
+            self.screen.fill(BLACK)
             self.screen.blit(self.BG.image, self.BG.rect)
             self.render_frame(0)
             self.start_time = time.time()
+
 
     def render_frame(self, i):
         self.screen.blit(self.frames[i], self.position)
@@ -350,6 +351,8 @@ class Template(object):
         finally:
             pygame.mixer.quit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
+        if DEBUG and pygame.get_init():
+            pygame.quit()
         # more callback and if condition goes here...
 
     # --> Register callback function and start MQTT
