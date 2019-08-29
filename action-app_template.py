@@ -145,7 +145,9 @@ class PAT_simple:
                 self.screen.blit(self.BG.image, self.BG.rect)
                 print("inserting image")
                 if image is not None and type(image) == str:
-                    self.insert_image(image=image, img_pos=(int(row["img_x"]), int(row["img_y"])))
+                    img_x = row["img_x"] if row["img_x"] is not None else 0
+                    img_y = row["img_y"] if row["img_y"] is not None else 0
+                    self.insert_image(image=image, img_pos=(int(img_x), int(img_y)))
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
                 print("rendering the frame")
