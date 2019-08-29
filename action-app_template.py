@@ -145,8 +145,8 @@ class PAT_simple:
                 self.screen.blit(self.BG.image, self.BG.rect)
                 print("inserting image")
                 if image is not None and type(image) == str:
-                    img_x = row["img_x"] if row["img_x"] is not None else 0
-                    img_y = row["img_y"] if row["img_y"] is not None else 0
+                    img_x = row["img_x"] if row["img_x"] is int else 0
+                    img_y = row["img_y"] if row["img_y"] is int else 0
                     self.insert_image(image=image, img_pos=(int(img_x), int(img_y)))
                 print("finished inserting image")
                 self.render_frame(self.frame_i)
@@ -357,9 +357,6 @@ class Template(object):
             print(type(inst))  # the exception instance
             print(inst.args)  # arguments stored in .args
             print(inst)  # __str__ allows args to be printed directly,
-            x, y = inst.args  # unpack args
-            print('x =', x)
-            print('y =', y)
             print("something got caught somewhere")
             if pygame.get_init():
                 pygame.mixer.quit()
