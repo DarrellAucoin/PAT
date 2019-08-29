@@ -121,7 +121,10 @@ class PAT_simple:
         self.start_time = time.time()
         print("before fadout")
         if pygame.get_init():
-            pygame.mixer.fadeout(0.25)
+            try:
+                pygame.mixer.fadeout(0.25)
+            except:
+                print("mixer not fading out")
             self.frame_i = 0
         print("after fadout")
         for index, row in response.iterrows():
