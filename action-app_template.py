@@ -326,6 +326,8 @@ class Template(object):
             self._display_surf = ScreenSingleTone()
             self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
             print("after initialization of pygame")
+        elif not pygame.mixer.get_init():
+            pygame.mixer.init()
         try:
             coming_intent = intent_message.intent.intent_name
             if ':' in coming_intent:
