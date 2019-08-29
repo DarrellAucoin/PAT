@@ -110,8 +110,8 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
-        # if not self.screen_on:
-        #     return None
+        if not self.screen_on:
+            return None
         print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
