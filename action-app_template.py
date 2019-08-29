@@ -117,7 +117,7 @@ class PAT_simple:
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
         response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
-        # self.start_time = time.time()
+        self.start_time = time.time()
         self.frame_i = 0
         for index, row in response.iterrows():
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
