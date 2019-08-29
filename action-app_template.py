@@ -117,39 +117,35 @@ class PAT_simple:
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
         response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
-        print("response table:\n", response)
         self.start_time = time.time()
-        print("before fadout")
         if pygame.get_init():
             try:
                 pygame.mixer.fadeout(0.25)
             except:
                 print("mixer not fading out")
             self.frame_i = 0
-        print("after fadout")
         for index, row in response.iterrows():
-            print("will this show up? 1")
-            print("row:", row)
-            print("will this show up? 2")
-            print("""row["response_mp3"]:""", dir(row))
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
-            print("file:", file)
             if row["image"] is not None and type(row["image"]) == str:
                 image = os.path.join(ROOT_DIR, "images", row["image"])
             else:
                 image = None
             print("image:", image)
-            if self.pygame_initalized:
+            if self.pygame.get_init():
                 song_end = pygame.USEREVENT + 1
-                # print("song_end:", song_end)
+                print("song_end:", song_end)
                 running = True
-                if image is not None and type(image) == str:
-                    insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
-                # print("file", file)
+
+                print("image file", image)
+                print("loading music")
                 pygame.mixer.music.load(file)
+                print("playing music")
                 pygame.mixer.music.play()
+                print('refreshing screen')
                 self.screen.fill(WHITE)
                 self.screen.blit(self.BG.image, self.BG.rect)
+                if image is not None and type(image) == str:
+                    insert_image(screen=self.screen, image=image, img_pos=(row["img_x"], row["img_y"]))
                 self.render_frame(self.frame_i)
                 while running:
                     events = pygame.event.get()
