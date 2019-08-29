@@ -124,8 +124,9 @@ class PAT_simple:
             pygame.mixer.fadeout(0.25)
             self.frame_i = 0
         for index, row in response.iterrows():
+            print("will this show up? 1")
             print("row:", row)
-            print("will this show up?")
+            print("will this show up? 2")
             print("""row["response_mp3"]:""", dir(row))
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             print("file:", file)
