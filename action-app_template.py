@@ -126,7 +126,7 @@ class PAT_simple:
         for index, row in response.iterrows():
             print("row:", row)
             print("""row["response_mp3"]:""", row["response_mp3"])
-            file = os.path.join(ROOT_DIR, 'intents', intent, row["response_mp3"])
+            file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             print("file:", file)
             image = os.path.join(ROOT_DIR, "images", row["image"])
             print("image file:", image)
