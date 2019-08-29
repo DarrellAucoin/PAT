@@ -311,8 +311,8 @@ class Template(object):
             print("before initialization of pygame")
             pygame.init()
             pygame.mixer.init()
-            self._display_surf = ScreenSingleTone()
-            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
+            self._display_surf = ScreenSingleTone() if self._display_surf is None else self._display_surf
+            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized) if self.PAT is None else self.PAT
             print("after initialization of pygame")
         elif not pygame.mixer.get_init():
             pygame.mixer.init()
