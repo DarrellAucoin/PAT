@@ -126,7 +126,9 @@ class PAT_simple:
         for index, row in response.iterrows():
             print("row:", row)
             file = os.path.join(ROOT_DIR, 'intents', intent, row["response_mp3"])
+            print("file:", file)
             image = os.path.join(ROOT_DIR, "images", row["image"])
+            print("image file:", image)
             print("image:", image)
             if self.pygame_initalized:
                 song_end = pygame.USEREVENT + 1
