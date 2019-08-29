@@ -125,11 +125,14 @@ class PAT_simple:
             self.frame_i = 0
         for index, row in response.iterrows():
             print("row:", row)
+            print("will this show up?")
             print("""row["response_mp3"]:""", dir(row))
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             print("file:", file)
-            image = os.path.join(ROOT_DIR, "images", row["image"])
-            print("image file:", image)
+            if row["image"] is not None and type(row["image"]) == str:
+                image = os.path.join(ROOT_DIR, "images", row["image"])
+            else:
+                image = None
             print("image:", image)
             if self.pygame_initalized:
                 song_end = pygame.USEREVENT + 1
