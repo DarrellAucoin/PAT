@@ -113,15 +113,18 @@ class PAT_simple:
     def talk_animation(self, response, intent="explain"):
         if not self.screen_on:
             return None
+        print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
         response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
+        print("response table:\n", response)
         self.start_time = time.time()
 
-        if self.pygame_initalized:
+        if pygame.get_init():
             pygame.mixer.fadeout(0.25)
             self.frame_i = 0
         for index, row in response.iterrows():
+            print("row:", row)
             file = os.path.join(ROOT_DIR, 'intents', intent, row["response_mp3"])
             image = os.path.join(ROOT_DIR, "images", row["image"])
             print("image:", image)
@@ -242,7 +245,7 @@ class Template(object):
         hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_explain(self, component):
-        # print("will this show up?")
+        print("inside play_explain")
         response = self.tables["Explain"][self.tables["Explain"]["component"] == component]#.sort_values(by=["play_order"])
 
         self.PAT.talk_animation(response, intent="explain")
