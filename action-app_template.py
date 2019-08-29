@@ -357,6 +357,8 @@ class Template(object):
                 pygame.mixer.quit()
                 pygame.quit()
             sys.exit()
+        finally:
+            pygame.mixer.quit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         # more callback and if condition goes here...
 
