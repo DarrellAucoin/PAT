@@ -345,7 +345,7 @@ class Template(object):
 
 
 if __name__ == "__main__":
-    screen_on = True
+    screen_on = False
 
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
