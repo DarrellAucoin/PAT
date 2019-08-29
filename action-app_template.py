@@ -24,6 +24,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 screen_size = (1024, 600)
+PAT_position = (-250, 100)
 DEBUG = False
 
 if sys.version_info[0] == 2:  # the tkinter library changed it's name from Python 2 to 3.
@@ -94,7 +95,7 @@ class PAT_simple:
         self.frame_i = 0
         self.start_time = time.time()
         self.pygame_initalized = screen_on
-        if screen_on:
+        if pygame.get_init():
             self._initialize()
 
     def _initialize(self):
@@ -199,7 +200,7 @@ class Template(object):
         self.PAT = None
         self.tables={}
         self._display_surf = None
-        self.PAT_position = (-300, 100)
+        self.PAT_position = PAT_position
         self.pygame_initalized = screen_on
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
