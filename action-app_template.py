@@ -15,12 +15,12 @@ import time
 import pandas as pd
 import sys
 from imageio import imread
-import visvis as vv
-# from pylab import imshow, show
+# import visvis as vv
+from pylab import imshow, show
 
 def insert_image(image):
     img = imread(imread(image))
-    vv.imshow(img)
+    imshow(img)
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"

@@ -4,5 +4,5 @@ pygame>=1.9.6
 pandas>=0.25
 pillow>=6.1
 imageio>=2.5
-visvis>=1.11
-# matplotlib>=3.1
+# visvis>=1.11
+matplotlib>=3.1
