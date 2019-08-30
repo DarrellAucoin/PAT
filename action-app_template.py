@@ -324,10 +324,10 @@ class FAQ_PAT(object):
             print("mixer still working")
         elif self.mp3_only:
             print("inside mp3only")
-            subprocess.Popen(['mpg123', '-q', file]).wait()
+            subprocess.Popen(['mpg123', '-q', file])#.wait()
             print("should be playing mp3 now")
-        else:
-            time.sleep(60)
+        # else:
+        #     time.sleep(60)
 
     def talk_animation(self, response, intent="explain"):
         if not self.pygame_on and not self.mp3_only and not self.mixer_mp3_only:
