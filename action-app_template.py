@@ -325,8 +325,6 @@ class Template(object):
             if ':' in coming_intent:
                 coming_intent = coming_intent.split(":")[1]
             print("coming_intent:", coming_intent)
-            if not self.pygame_initalized:
-                return None
             if coming_intent == 'Explain':
                 self.intent_explain(hermes, intent_message)
             elif coming_intent == 'Purpose':
@@ -372,7 +370,6 @@ if __name__ == "__main__":
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
             screen_on = True
-            # pygame.init()
         if "DEBUG" in sys.argv:
             DEBUG = True
         PAT_avatar = Template(screen_on=screen_on)
