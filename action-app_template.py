@@ -20,7 +20,7 @@ import visvis as vv
 
 def insert_image(image):
     img = imread(imread(image))
-    vv.show(img)
+    vv.imshow(img)
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -272,7 +272,7 @@ class FAQ_PAT(object):
         self._reset_animation()
 
     @staticmethod
-    def _shutdown_pygame(self):
+    def _shutdown_pygame():
         pygame.mixer.quit()
         pygame.quit()
 
@@ -460,7 +460,10 @@ class FAQ_PAT(object):
         if (self.pygame_on or self.mixer_mp3_only) and not pygame.mixer.get_init():
             pygame.mixer.init()
         try:
-            pygame.init()
+
+            # if True:
+            #     self._initialize()
+
             coming_intent = intent_message.intent.intent_name
             if ':' in coming_intent:
                 coming_intent = coming_intent.split(":")[1]
