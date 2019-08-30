@@ -26,6 +26,8 @@ import sys
 def insert_image(image):
     subprocess.Popen(['pqiv', '--fullscreen', image])
 
+
+
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
 MQTT_IP_ADDR = "localhost"
@@ -502,6 +504,8 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         if DEBUG and pygame.get_init():
             self._shutdown_pygame()
+        if self.mp3_only:
+            insert_image(os.path.join("/home/pi/PAT", BG_IMAGE))
         # terminate the session first if not continue
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
