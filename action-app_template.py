@@ -23,13 +23,18 @@ import sys
 # from pylab import imshow, show
 
 
-def insert_image(image):
-    if os.path.isfile(image):
-        subprocess.Popen(['xdotool', 'key', "Escape"])
-        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image])
-    else:
-        subprocess.Popen(['xdotool', 'key', "Escape"])
-        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE])
+def insert_image(image, delay=7):
+    if type(image) == str:
+        if os.path.isfile(image):
+            # subprocess.Popen(['xdotool', 'key', "Escape"])
+            subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image])
+        else:
+            # subprocess.Popen(['xdotool', 'key', "Escape"])
+            subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE])
+    elif type(image) == list:
+        images = [img for img in image if os.path.isfile(img)]
+        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
+                          "--slideshow", "-d", delay, *images])
 
 
 
@@ -312,7 +317,7 @@ class FAQ_PAT(object):
     #     self._render_frame(self.frame_i)
 
     def show_image(self, image, img_x=300, img_y=0):
-        if image is None or type(image) != str:
+        if image is None or type(image) not in [str, list]:
             return None
         elif pygame.get_init():
             try:
@@ -323,6 +328,7 @@ class FAQ_PAT(object):
                 img_y = 0
             self.screen.fill(BLACK)
             self.screen.blit(self.BG.image, self.BG.rect)
+            image = image if type(image) is str else image[0]
             img = pygame.image.load(image)
             self.screen.blit(img, (img_x, img_y))
             self._render_frame(self.frame_i)
@@ -360,7 +366,11 @@ class FAQ_PAT(object):
         for index, row in response.iterrows():
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             if row["image"] is not None and type(row["image"]) == str:
-                image = os.path.join(ROOT_DIR, "images", row["image"])
+                if ";" in row["image"]:
+                    images = [os.path.join(ROOT_DIR, "images", img) for img in row["image"]]
+                    image = [img for img in images if os.path.isfile(os.path.join(ROOT_DIR, "images", img))]
+                else:
+                    image = os.path.join(ROOT_DIR, "images", row["image"])
             else:
                 image = None
             print("image:", image)
