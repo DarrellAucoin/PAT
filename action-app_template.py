@@ -372,7 +372,7 @@ class FAQ_PAT(object):
         slots = self._get_slots(intent_message, slot_names=["Components"])
         # print("slots:", slots)
         self.play_explain(slots["Components"])
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_explain(self, component):
         print("inside play_explain")
