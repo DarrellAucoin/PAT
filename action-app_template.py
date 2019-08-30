@@ -9,36 +9,22 @@ import io
 import os
 import subprocess
 # import PIL
-from PIL import Image
+# from PIL import Image
 import pygame
 import time
 import pandas as pd
 import sys
-from numpy import random
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from pylab import imshow, show
-from imageio import imread
+# from numpy import random
+# import matplotlib.pyplot as plt
+# import matplotlib as mpl
+# from pylab import imshow, show
+# from imageio import imread
 # import visvis as vv
 # from pylab import imshow, show
 
-def insert_image(image):
 
-    mpl.rcParams['toolbar'] = 'None'
-    plt.ion()
-    fig = plt.figure()
-    fig.canvas.window().statusBar().setVisible(False)
-    data = random.random((600, 800))
-    img = plt.imshow(data, interpolation='nearest')
-    img.set_cmap('hot')
-    plt.axis('off')
-    plt.tight_layout()
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    figManager = plt.get_current_fig_manager()
-    figManager.window.showMaximized()
-    img = imread(imread(image))
-    imshow(img)
-    show()
+def insert_image(image):
+    subprocess.Popen(['pqiv', '--fullscreen', image])
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -52,15 +38,15 @@ screen_size = (1024, 600)
 PAT_position = (-250, 100)
 DEBUG = False
 BG_IMAGE = "space.jpg"
-
+'''
 if sys.version_info[0] == 2:  # the tkinter library changed it's name from Python 2 to 3.
     import Tkinter
     tkinter = Tkinter #I decided to use a library reference to avoid potential naming conflicts with people's programs.
 else:
     import tkinter
 from PIL import Image, ImageTk
-
-
+'''
+'''
 def showPIL(pilImage):
     root = tkinter.Tk()
     w, h = root.winfo_screenwidth(), root.winfo_screenheight()
@@ -80,7 +66,7 @@ def showPIL(pilImage):
     image = ImageTk.PhotoImage(pilImage)
     imagesprite = canvas.create_image(w/2,h/2,image=image)
     root.mainloop()
-
+'''
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
