@@ -311,8 +311,8 @@ class FAQ_PAT(object):
         elif self.mp3_only or self.mixer_mp3_only:
             try:
                 img = Image.open(image)
-                img.show()
-                # showPIL(img)
+                # img.show()
+                showPIL(img)
             except:
                 print("image file not found:", image)
 
