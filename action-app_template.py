@@ -69,6 +69,9 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
+
+
+'''
 class ScreenSingleTone(object):
     __instance = None
 
@@ -79,25 +82,25 @@ class ScreenSingleTone(object):
             ScreenSingleTone.__instance = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
             pygame.display.set_caption('PAT')
         return ScreenSingleTone.__instance
+'''
 
 
 
-
-
+'''
 class PAT_simple:
 
-    def __init__(self, position, screen_on=False, screen=None, mp3_only=False):
+    def __init__(self, position, screen=None, mp3_only=False):
         # self.screen = None
         self.gamer_girl = None
         self.frames = None
-        self.screen_on = screen_on
+        self.screen_on = pygame.get_init()
         self.screen = screen
         self.mp3_only = mp3_only
         self.position = position
         self.BG = None
         self.frame_i = 0
         self.start_time = time.time()
-        self.pygame_initalized = screen_on
+        # self.pygame_initalized = screen_on
         if pygame.get_init():
             self._initialize()
 
@@ -122,6 +125,8 @@ class PAT_simple:
         response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
         self.start_time = time.time()
         self.frame_i = 0
+        self.gamer_girl = None
+        self.frames = None
         for index, row in response.iterrows():
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             if row["image"] is not None and type(row["image"]) == str:
@@ -129,9 +134,10 @@ class PAT_simple:
             else:
                 image = None
             print("image:", image)
-            if pygame.get_init():
+            if pygame.mixer.get_init():
                 pygame.mixer.music.load(file)
                 pygame.mixer.music.play()
+            if pygame.get_init():
                 self.screen.fill(BLACK)
                 self.screen.blit(self.BG.image, self.BG.rect)
                 if image is not None and type(image) == str:
@@ -170,6 +176,21 @@ class PAT_simple:
             self.start_time = time.time()
 
 
+    def _pygame_initialize(self):
+        self.screen = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+        pygame.display.set_caption('PAT')
+        self.gamer_girl = [
+            pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
+            range(14)]
+        self.BG = Background(os.path.join(ROOT_DIR, BG_IMAGE), [0, 0])
+        self.frames = self.gamer_girl
+
+
+        self.screen.fill(BLACK)
+        self.screen.blit(self.BG.image, self.BG.rect)
+        self.render_frame(0)
+        self.start_time = time.time()
+
     def render_frame(self, i):
         self.screen.blit(self.frames[i], self.position)
         pygame.display.update()
@@ -183,14 +204,15 @@ class PAT_simple:
     def insert_image(self, image, img_pos):
         img = pygame.image.load(image)
         self.screen.blit(img, img_pos)
+'''
 
-class Template(object):
+class FAQ_PAT(object):
     """Class used to wrap action code with mqtt connection
 
         Please change the name refering to your application
     """
 
-    def __init__(self, screen_on=False, mp3_only=False):
+    def __init__(self, pygame_on=False, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -202,26 +224,122 @@ class Template(object):
 
         self.config = None
         self.PAT = None
+        self.frame_i = 0
         self.tables = {}
-        self._display_surf = None
+        self.screen = None
+        self.BG = None
+        self.gamer_girl = None
+        self.frames = None
         self.PAT_position = PAT_position
-        self.pygame_initalized = screen_on
+        self.pygame_on = pygame_on
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
         # start listening to MQTT
         self._get_tables()
-        if pygame.get_init():
-            self._display_surf = ScreenSingleTone()
-            self.PAT = PAT_simple(self.PAT_position, screen_on=True, screen=self._display_surf)
-        else:
-            self.PAT = PAT_simple(self.PAT_position, screen_on=False, mp3_only=self.mp3_only)
+        # if pygame.get_init():
+        #     self._initialize()
+            # self._display_surf = ScreenSingleTone()
+            # self.PAT = PAT_simple(self.PAT_position, screen_on=True, screen=self._display_surf)
+        # else:
+        #     self.PAT = PAT_simple(self.PAT_position, screen_on=False, mp3_only=self.mp3_only)
 
 
         # print("end of __init__ of Template")
 
 
-    def _get_slots(self, intent_message, slot_names=[]):
+    def _initialize(self):
+        pygame.init()
+        # pygame.mixer.init()
+        self.screen = pygame.display.set_mode(screen_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+        pygame.display.set_caption('PAT')
+        self.BG = Background(os.path.join(ROOT_DIR, BG_IMAGE), [0, 0])
+
+        self.gamer_girl = [
+            pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
+            range(14)]
+        self.frames = self.gamer_girl
+        self._reset_animation()
+
+    @staticmethod
+    def _shutdown_pygame(self):
+        pygame.mixer.quit()
+        pygame.quit()
+
+    def _render_frame(self, i):
+        self.screen.blit(self.frames[i], self.PAT_position)
+        pygame.display.update()
+
+    def _reset_animation(self):
+        self.screen.fill(BLACK)
+        self.screen.blit(self.BG.image, self.BG.rect)
+        self._render_frame(0)
+        self.start_time = time.time()
+
+    def _animate(self):
+        if time.time() - self.start_time >= 0.2:
+            self.start_time = time.time()
+            self.frame_i = (self.frame_i + 1) % len(self.frames)
+            self._render_frame(self.frame_i)
+
+    def insert_image(self, image, img_pos):
+        self.screen.fill(BLACK)
+        self.screen.blit(self.BG.image, self.BG.rect)
+        img = pygame.image.load(image)
+        self.screen.blit(img, img_pos)
+        self._render_frame(self.frame_i)
+
+    @staticmethod
+    def _play_mp3(file):
+        pygame.mixer.music.load(file)
+        pygame.mixer.music.play()
+
+    def talk_animation(self, response, intent="explain"):
+        # if not self.screen_on:
+        #     return None
+        print("inside talk_animation")
+        # print("in talk_animation")
+        # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
+        response = response[["response_text", "response_mp3", "image", "img_x", "img_y"]]
+        self.start_time = time.time()
+        self.frame_i = 0
+        for index, row in response.iterrows():
+            file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
+            if row["image"] is not None and type(row["image"]) == str:
+                image = os.path.join(ROOT_DIR, "images", row["image"])
+            else:
+                image = None
+            print("image:", image)
+            if pygame.mixer.get_init():
+                self._play_mp3(file=file)
+            if pygame.get_init():
+
+                # self.screen.fill(BLACK)
+                # self.screen.blit(self.BG.image, self.BG.rect)
+                if image is not None and type(image) == str:
+                    try:
+                        img_x = int(row["img_x"])
+                        img_y = int(row["img_y"])
+                    except:
+                        img_x = 300
+                        img_y = 0
+                    self.insert_image(image=image, img_pos=(int(img_x), int(img_y)))
+
+            while pygame.mixer.music.get_busy():
+                if pygame.get_init():
+                    self._animate()
+                elif image is not None and type(image) == str:
+                    try:
+                        img = Image.open(image)
+                        img.show()
+                        # showPIL(img)
+                    except:
+                        print("image file not found:", image)
+        if pygame.get_init():
+            self._reset_animation()
+
+    @staticmethod
+    def _get_slots(intent_message, slot_names=[]):
         slots = {}
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
@@ -251,7 +369,7 @@ class Template(object):
         print("inside play_explain")
         response = self.tables["Explain"][self.tables["Explain"]["component"] == component]#.sort_values(by=["play_order"])
 
-        self.PAT.talk_animation(response, intent="explain")
+        self.talk_animation(response, intent="explain")
 
     def intent_purpose(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
@@ -263,7 +381,7 @@ class Template(object):
     def play_purpose(self, component, people):
         response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
                                           self.tables["Purpose"]["people"] == people]#.sort_values(by=["play_order"])
-        self.PAT.talk_animation(response, intent="purpose")
+        self.talk_animation(response, intent="purpose")
 
     def intent_availability(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
@@ -277,9 +395,7 @@ class Template(object):
     def play_availability(self, location):
         response = self.tables["Availability"][self.tables["Availability"]["location"] \
                                                == location]#.sort_values(by=["play_order"])
-        response = self.cursor.fetchall()
-
-        self.PAT.talk_animation(response, intent="Availability")
+        self.talk_animation(response, intent="Availability")
 
     def intent_bye(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
@@ -314,14 +430,11 @@ class Template(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-        if not pygame.get_init() and self.pygame_initalized:
+        if not pygame.get_init() and self.pygame_on:
             print("before initialization of pygame")
-            pygame.init()
-            pygame.mixer.init()
-            self._display_surf = ScreenSingleTone() if self._display_surf is None else self._display_surf
-            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized) if self.PAT is None else self.PAT
+            self._initialize()
             print("after initialization of pygame")
-        elif not pygame.mixer.get_init():
+        if (self.pygame_on or self.mp3_only) and not pygame.mixer.get_init():
             pygame.mixer.init()
         try:
             coming_intent = intent_message.intent.intent_name
@@ -368,12 +481,14 @@ class Template(object):
 
 
 if __name__ == "__main__":
-    screen_on = False
-
+    pygame_on = False
+    mp3_only = False
     with Hermes(MQTT_ADDR) as h:
         if len(sys.argv) > 1 and "pygame" in sys.argv:
-            screen_on = True
+            pygame_on = True
         if "DEBUG" in sys.argv:
             DEBUG = True
-        PAT_avatar = Template(screen_on=screen_on)
+        if "mp3_only" in sys.argv:
+            mp3_only = True
+        PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mp3_only=mp3_only)
         h.subscribe_intents(PAT_avatar.master_intent_callback).start()
