@@ -453,8 +453,7 @@ class FAQ_PAT(object):
                 self.intent_bye(hermes, intent_message)
             elif coming_intent == 'Show_Menu':
                 self.intent_show_menu(hermes, intent_message)
-            # terminate the session first if not continue
-            # hermes.publish_start_session_notification(intent_message.site_id, "", "")
+
             # if pygame.get_init() and self.pygame_initalized:
             #     pygame.mixer.quit()
             #     pygame.quit()
@@ -465,13 +464,15 @@ class FAQ_PAT(object):
             print("something got caught somewhere")
             if pygame.get_init():
                 self._shutdown_pygame()
-            # sys.exit()
+            sys.exit()
         finally:
             if pygame.mixer.get_init():
                 pygame.mixer.quit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         if DEBUG and pygame.get_init():
-            pygame.quit()
+            self._shutdown_pygame()
+        # terminate the session first if not continue
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
 
     # --> Register callback function and start MQTT
@@ -483,12 +484,12 @@ class FAQ_PAT(object):
 if __name__ == "__main__":
     pygame_on = False
     mp3_only = False
-    with Hermes(MQTT_ADDR) as h:
-        if len(sys.argv) > 1 and "pygame" in sys.argv:
-            pygame_on = True
-        if "DEBUG" in sys.argv:
-            DEBUG = True
-        if "mp3_only" in sys.argv:
-            mp3_only = True
-        PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mp3_only=mp3_only)
-        h.subscribe_intents(PAT_avatar.master_intent_callback).start()
+    if len(sys.argv) > 1 and "pygame" in sys.argv:
+        pygame_on = True
+    if "DEBUG" in sys.argv:
+        DEBUG = True
+    if "mp3_only" in sys.argv:
+        mp3_only = True
+
+    PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mp3_only=mp3_only)
+    PAT_avatar.start_blocking()
