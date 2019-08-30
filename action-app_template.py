@@ -313,13 +313,13 @@ class FAQ_PAT(object):
             except:
                 print("image file not found:", image)
 
-
-    @staticmethod
-    def _play_mp3(file):
+    def _play_mp3(self, file):
         if pygame.mixer.get_init():
+            print("inside mixer")
             pygame.mixer.music.load(file)
             pygame.mixer.music.play()
-        else:
+            print("mixer still working")
+        elif self.mp3_only:
             subprocess.Popen(['mpg123', '-q', file]).wait()
 
 
