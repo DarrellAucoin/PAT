@@ -199,7 +199,7 @@ class Template(object):
 
         self.config = None
         self.PAT = None
-        self.tables={}
+        self.tables = {}
         self._display_surf = None
         self.PAT_position = PAT_position
         self.pygame_initalized = screen_on
@@ -209,7 +209,7 @@ class Template(object):
         self._get_tables()
         if pygame.get_init():
             self._display_surf = ScreenSingleTone()
-            self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
+        self.PAT = PAT_simple(self.PAT_position, screen_on=self.pygame_initalized)
 
 
         # print("end of __init__ of Template")
