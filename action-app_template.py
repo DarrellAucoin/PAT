@@ -492,7 +492,7 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     pygame_on = False
-    mp3_only = False
+    mp3_only = True
     if len(sys.argv) > 1 and "pygame" in sys.argv:
         pygame_on = True
     if "DEBUG" in sys.argv:
