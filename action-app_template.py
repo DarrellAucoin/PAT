@@ -24,7 +24,7 @@ import sys
 
 
 def insert_image(image):
-    subprocess.Popen(['pqiv', '--fullscreen', image])
+    subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image])
 
 
 
@@ -504,8 +504,6 @@ class FAQ_PAT(object):
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         if DEBUG and pygame.get_init():
             self._shutdown_pygame()
-        if self.mp3_only:
-            insert_image(os.path.join("/home/pi/PAT", BG_IMAGE))
         # terminate the session first if not continue
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
