@@ -26,6 +26,7 @@ RED = (255, 0, 0)
 screen_size = (1024, 600)
 PAT_position = (-250, 100)
 DEBUG = False
+BG_IMAGE = "space.jpg"
 
 if sys.version_info[0] == 2:  # the tkinter library changed it's name from Python 2 to 3.
     import Tkinter
@@ -105,7 +106,7 @@ class PAT_simple:
             range(14)]
         self.frames = self.gamer_girl
         # self.position = position
-        self.BG = Background(os.path.join(ROOT_DIR, 'earth.jpg'), [0, 0])
+        self.BG = Background(os.path.join(ROOT_DIR, BG_IMAGE), [0, 0])
         self.screen.fill(BLACK)
         self.screen.blit(self.BG.image, self.BG.rect)
         self.render_frame(0)
