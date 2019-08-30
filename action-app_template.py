@@ -464,11 +464,11 @@ class FAQ_PAT(object):
             print(inst)  # __str__ allows args to be printed directly,
             print("something got caught somewhere")
             if pygame.get_init():
-                pygame.mixer.quit()
-                pygame.quit()
-            sys.exit()
+                self._shutdown_pygame()
+            # sys.exit()
         finally:
-            pygame.mixer.quit()
+            if pygame.mixer.get_init():
+                pygame.mixer.quit()
         print(f'[Received] intent: {intent_message.intent.intent_name}')
         if DEBUG and pygame.get_init():
             pygame.quit()
