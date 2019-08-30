@@ -14,12 +14,13 @@ import pygame
 import time
 import pandas as pd
 import sys
-from scipy.misc import imread
-from pylab import imshow, show
+from imageio import imread
+import visvis as vv
+# from pylab import imshow, show
 
 def insert_image(image):
-    imshow(imread(image))
-    show()
+    img = imread(imread(image))
+    vv.show(img)
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
