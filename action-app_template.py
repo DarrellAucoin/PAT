@@ -308,7 +308,7 @@ class FAQ_PAT(object):
             img = pygame.image.load(image)
             self.screen.blit(img, (img_x, img_y))
             self._render_frame(self.frame_i)
-        elif self.mp3_only or self.mixer_mp3_only:
+        elif self.mp3_only or self.mixer_mp3_only or True:
             try:
                 img = Image.open(image)
                 img.show()
