@@ -273,7 +273,8 @@ class FAQ_PAT(object):
     def _reset_animation(self):
         self.screen.fill(BLACK)
         self.screen.blit(self.BG.image, self.BG.rect)
-        self._render_frame(0)
+        self.frame_i = 0
+        self._render_frame(self.frame_i)
         self.start_time = time.time()
 
     def _animate(self):
@@ -282,17 +283,45 @@ class FAQ_PAT(object):
             self.frame_i = (self.frame_i + 1) % len(self.frames)
             self._render_frame(self.frame_i)
 
-    def insert_image(self, image, img_pos):
-        self.screen.fill(BLACK)
-        self.screen.blit(self.BG.image, self.BG.rect)
-        img = pygame.image.load(image)
-        self.screen.blit(img, img_pos)
-        self._render_frame(self.frame_i)
+    # def insert_image(self, image, img_pos):
+    #     self.screen.fill(BLACK)
+    #     self.screen.blit(self.BG.image, self.BG.rect)
+    #     img = pygame.image.load(image)
+    #     self.screen.blit(img, img_pos)
+    #     self._render_frame(self.frame_i)
+
+    def show_image(self, image, img_x=300, img_y=0):
+        if image is None or type(image) != str:
+            return None
+        elif pygame.get_init():
+            try:
+                img_x = int(img_x)
+                img_y = int(img_y)
+            except ValueError:
+                img_x = 300
+                img_y = 0
+            self.screen.fill(BLACK)
+            self.screen.blit(self.BG.image, self.BG.rect)
+            img = pygame.image.load(image)
+            self.screen.blit(img, (img_x, img_y))
+            self._render_frame(self.frame_i)
+        else:
+            try:
+                img = Image.open(image)
+                img.show()
+                # showPIL(img)
+            except:
+                print("image file not found:", image)
+
 
     @staticmethod
     def _play_mp3(file):
-        pygame.mixer.music.load(file)
-        pygame.mixer.music.play()
+        if pygame.mixer.get_init():
+            pygame.mixer.music.load(file)
+            pygame.mixer.music.play()
+        else:
+            subprocess.Popen(['mpg123', '-q', file]).wait()
+
 
     def talk_animation(self, response, intent="explain"):
         # if not self.screen_on:
@@ -310,31 +339,11 @@ class FAQ_PAT(object):
             else:
                 image = None
             print("image:", image)
-            if pygame.mixer.get_init():
-                self._play_mp3(file=file)
-            if pygame.get_init():
-
-                # self.screen.fill(BLACK)
-                # self.screen.blit(self.BG.image, self.BG.rect)
-                if image is not None and type(image) == str:
-                    try:
-                        img_x = int(row["img_x"])
-                        img_y = int(row["img_y"])
-                    except:
-                        img_x = 300
-                        img_y = 0
-                    self.insert_image(image=image, img_pos=(int(img_x), int(img_y)))
-
+            self._play_mp3(file=file)
+            self.show_image(image, img_x=row["img_x"], img_y=row["img_y"])
             while pygame.mixer.music.get_busy():
                 if pygame.get_init():
                     self._animate()
-                elif image is not None and type(image) == str:
-                    try:
-                        img = Image.open(image)
-                        img.show()
-                        # showPIL(img)
-                    except:
-                        print("image file not found:", image)
         if pygame.get_init():
             self._reset_animation()
 
