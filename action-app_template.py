@@ -372,7 +372,7 @@ class FAQ_PAT(object):
                 else:
                     image = os.path.join(ROOT_DIR, "images", row["image"])
             else:
-                image = None
+                image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
             print("image:", image)
             self.show_image(image, img_x=row["img_x"], img_y=row["img_y"])
             self._play_mp3(file=file)
