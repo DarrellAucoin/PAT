@@ -311,8 +311,8 @@ class FAQ_PAT(object):
         elif self.mp3_only or self.mixer_mp3_only:
             try:
                 img = Image.open(image)
-                # img.show()
-                showPIL(img)
+                img.show()
+                # showPIL(img)
             except:
                 print("image file not found:", image)
 
@@ -499,7 +499,7 @@ class FAQ_PAT(object):
 if __name__ == "__main__":
     pygame_on = False
     mixer_mp3_only = False
-    mp3_only = True
+    mp3_only = False
     if "pygame" in sys.argv:
         pygame_on = True
     elif "mixer_mp3_only" in sys.argv:
