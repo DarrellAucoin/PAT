@@ -492,13 +492,12 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     pygame_on = False
-    mp3_only = True
-    if len(sys.argv) > 1 and "pygame" in sys.argv:
+    mp3_only = False
+    if "pygame" in sys.argv:
         pygame_on = True
+    elif "mp3_only" in sys.argv:
+        mp3_only = True
     if "DEBUG" in sys.argv:
         DEBUG = True
-    if "mp3_only" in sys.argv:
-        mp3_only = True
-
     PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mp3_only=mp3_only)
     PAT_avatar.start_blocking()
