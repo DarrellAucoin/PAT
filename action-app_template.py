@@ -25,9 +25,9 @@ import sys
 
 def insert_image(image):
     if os.path.isfile(image):
-        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image])
+        subprocess.Popen(['xdotool key <escape> ; pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image])
     else:
-        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE])
+        subprocess.Popen(['xdotool key <escape> ; pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE])
 
 
 
