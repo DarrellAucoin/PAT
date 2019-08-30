@@ -325,6 +325,8 @@ class Template(object):
             if ':' in coming_intent:
                 coming_intent = coming_intent.split(":")[1]
             print("coming_intent:", coming_intent)
+            if not self.pygame_initalized:
+                return None
             if coming_intent == 'Explain':
                 self.intent_explain(hermes, intent_message)
             elif coming_intent == 'Purpose':
