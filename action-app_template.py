@@ -212,7 +212,7 @@ class FAQ_PAT(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, pygame_on=False, mp3_only=False):
+    def __init__(self, pygame_on=False, mixer_mp3_only=False, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -230,10 +230,12 @@ class FAQ_PAT(object):
         self.BG = None
         self.gamer_girl = None
         self.frames = None
+        self.pygame_on = pygame_on
+        self.mixer_mp3_only = mixer_mp3_only
+        self.mp3_only = mp3_only
         self.start_time = time.time()
         self.PAT_position = PAT_position
-        self.pygame_on = pygame_on
-        self.mp3_only = mp3_only
+
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
         # start listening to MQTT
@@ -306,7 +308,7 @@ class FAQ_PAT(object):
             img = pygame.image.load(image)
             self.screen.blit(img, (img_x, img_y))
             self._render_frame(self.frame_i)
-        elif self.mp3_only:
+        elif self.mp3_only or self.mixer_mp3_only:
             try:
                 img = Image.open(image)
                 img.show()
@@ -324,11 +326,11 @@ class FAQ_PAT(object):
             print("inside mp3only")
             subprocess.Popen(['mpg123', '-q', file]).wait()
             print("should be playing mp3 now")
-        else:
-            time.sleep(60)
+        # else:
+        #     time.sleep(60)
 
     def talk_animation(self, response, intent="explain"):
-        if not self.pygame_on and not self.mp3_only:
+        if not self.pygame_on and not self.mp3_only and not self.mixer_mp3_only:
             return None
         print("inside talk_animation")
         # print("in talk_animation")
@@ -447,7 +449,7 @@ class FAQ_PAT(object):
             print("before initialization of pygame")
             self._initialize()
             print("after initialization of pygame")
-        if (self.pygame_on or self.mp3_only) and not pygame.mixer.get_init():
+        if (self.pygame_on or self.mixer_mp3_only) and not pygame.mixer.get_init():
             pygame.mixer.init()
         try:
             coming_intent = intent_message.intent.intent_name
@@ -496,12 +498,15 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     pygame_on = False
+    mixer_mp3_only = False
     mp3_only = False
     if "pygame" in sys.argv:
         pygame_on = True
+    elif "mixer_mp3_only" in sys.argv:
+        mp3_only = True
     elif "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
         DEBUG = True
-    PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mp3_only=mp3_only)
+    PAT_avatar = FAQ_PAT(pygame_on=pygame_on, mixer_mp3_only=mixer_mp3_only, mp3_only=mp3_only)
     PAT_avatar.start_blocking()
