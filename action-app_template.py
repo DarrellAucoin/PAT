@@ -460,6 +460,7 @@ class FAQ_PAT(object):
         if (self.pygame_on or self.mixer_mp3_only) and not pygame.mixer.get_init():
             pygame.mixer.init()
         try:
+            pygame.init()
             coming_intent = intent_message.intent.intent_name
             if ':' in coming_intent:
                 coming_intent = coming_intent.split(":")[1]
