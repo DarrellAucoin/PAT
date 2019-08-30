@@ -230,6 +230,7 @@ class FAQ_PAT(object):
         self.BG = None
         self.gamer_girl = None
         self.frames = None
+        self.start_time = time.time()
         self.PAT_position = PAT_position
         self.pygame_on = pygame_on
         self.mp3_only = mp3_only
@@ -305,7 +306,7 @@ class FAQ_PAT(object):
             img = pygame.image.load(image)
             self.screen.blit(img, (img_x, img_y))
             self._render_frame(self.frame_i)
-        else:
+        elif self.mp3_only:
             try:
                 img = Image.open(image)
                 img.show()
@@ -322,10 +323,9 @@ class FAQ_PAT(object):
         elif self.mp3_only:
             subprocess.Popen(['mpg123', '-q', file]).wait()
 
-
     def talk_animation(self, response, intent="explain"):
-        # if not self.screen_on:
-        #     return None
+        if not self.pygame_on and not self.mp3_only:
+            return None
         print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
@@ -341,8 +341,8 @@ class FAQ_PAT(object):
             print("image:", image)
             self._play_mp3(file=file)
             self.show_image(image, img_x=row["img_x"], img_y=row["img_y"])
-            while pygame.mixer.music.get_busy():
-                if pygame.get_init():
+            if pygame.get_init() and pygame.mixer.get_init():
+                while pygame.mixer.music.get_busy():
                     self._animate()
         if pygame.get_init():
             self._reset_animation()
