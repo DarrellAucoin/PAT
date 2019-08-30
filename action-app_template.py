@@ -499,7 +499,7 @@ class FAQ_PAT(object):
 if __name__ == "__main__":
     pygame_on = False
     mixer_mp3_only = False
-    mp3_only = False
+    mp3_only = True
     if "pygame" in sys.argv:
         pygame_on = True
     elif "mixer_mp3_only" in sys.argv:
