@@ -86,11 +86,13 @@ class ScreenSingleTone(object):
 
 class PAT_simple:
 
-    def __init__(self, position, screen_on=False):
-        self.screen = None
+    def __init__(self, position, screen_on=False, screen=None, mp3_only=False):
+        # self.screen = None
         self.gamer_girl = None
         self.frames = None
         self.screen_on = screen_on
+        self.screen = screen
+        self.mp3_only = mp3_only
         self.position = position
         self.BG = None
         self.frame_i = 0
@@ -100,7 +102,7 @@ class PAT_simple:
             self._initialize()
 
     def _initialize(self):
-        self.screen = ScreenSingleTone()
+        # self.screen = ScreenSingleTone()
         self.gamer_girl = [
             pygame.image.load(os.path.join(ROOT_DIR, f'PAT/png/frame_{i}_delay-0.2s.png')).convert_alpha() for i in
             range(14)]
@@ -112,8 +114,8 @@ class PAT_simple:
         self.render_frame(0)
 
     def talk_animation(self, response, intent="explain"):
-        if not self.screen_on:
-            return None
+        # if not self.screen_on:
+        #     return None
         print("inside talk_animation")
         # print("in talk_animation")
         # response = response[["response_text", "response_mp3", "animation", "image", "img_x", "img_y"]]
@@ -145,7 +147,7 @@ class PAT_simple:
                 print("rendering the frame")
                 while pygame.mixer.music.get_busy():
                     self._animate()
-            else:
+            elif self.mp3_only:
                 if image is not None and type(image) == str:
                     try:
                         img = Image.open(image)
@@ -188,7 +190,7 @@ class Template(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, screen_on=False):
+    def __init__(self, screen_on=False, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -204,15 +206,16 @@ class Template(object):
         self._display_surf = None
         self.PAT_position = PAT_position
         self.pygame_initalized = screen_on
+        self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "Show_Menu"]
         self._running = True
         # start listening to MQTT
         self._get_tables()
         if pygame.get_init():
             self._display_surf = ScreenSingleTone()
-            self.PAT = PAT_simple(self.PAT_position, screen_on=True)
-        elif not screen_on:
-            self.PAT = PAT_simple(self.PAT_position, screen_on=False)
+            self.PAT = PAT_simple(self.PAT_position, screen_on=True, screen=self._display_surf)
+        else:
+            self.PAT = PAT_simple(self.PAT_position, screen_on=False, mp3_only=self.mp3_only)
 
 
         # print("end of __init__ of Template")
