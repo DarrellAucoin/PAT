@@ -14,13 +14,31 @@ import pygame
 import time
 import pandas as pd
 import sys
+from numpy import random
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from pylab import imshow, show
 from imageio import imread
 # import visvis as vv
-from pylab import imshow, show
+# from pylab import imshow, show
 
 def insert_image(image):
+
+    mpl.rcParams['toolbar'] = 'None'
+    plt.ion()
+    fig = plt.figure()
+    fig.canvas.window().statusBar().setVisible(False)
+    data = random.random((600, 800))
+    img = plt.imshow(data, interpolation='nearest')
+    img.set_cmap('hot')
+    plt.axis('off')
+    plt.tight_layout()
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    figManager = plt.get_current_fig_manager()
+    figManager.window.showMaximized()
     img = imread(imread(image))
     imshow(img)
+    show()
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
