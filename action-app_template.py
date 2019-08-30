@@ -326,8 +326,8 @@ class FAQ_PAT(object):
             print("inside mp3only")
             subprocess.Popen(['mpg123', '-q', file]).wait()
             print("should be playing mp3 now")
-        # else:
-        #     time.sleep(60)
+        else:
+            time.sleep(60)
 
     def talk_animation(self, response, intent="explain"):
         if not self.pygame_on and not self.mp3_only and not self.mixer_mp3_only:
@@ -345,8 +345,8 @@ class FAQ_PAT(object):
             else:
                 image = None
             print("image:", image)
-            self._play_mp3(file=file)
             self.show_image(image, img_x=row["img_x"], img_y=row["img_y"])
+            self._play_mp3(file=file)
             if pygame.get_init() and pygame.mixer.get_init():
                 while pygame.mixer.music.get_busy():
                     self._animate()
