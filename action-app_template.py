@@ -17,8 +17,8 @@ import sys
 from scipy.misc import imread
 from pylab import imshow, show
 
-def insert_image:
-    imshow(imread('foo.jpeg'))
+def insert_image(image):
+    imshow(imread(image))
     show()
 
 CONFIG_INI = "config.ini"
@@ -316,8 +316,9 @@ class FAQ_PAT(object):
             self._render_frame(self.frame_i)
         elif self.mp3_only or self.mixer_mp3_only:
             try:
-                img = Image.open(image)
-                img.show()
+                insert_image(image)
+                # img = Image.open(image)
+                # img.show()
                 # showPIL(img)
             except:
                 print("image file not found:", image)
