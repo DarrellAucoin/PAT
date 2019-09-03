@@ -34,8 +34,8 @@ def insert_image(image, delay=7):
     elif type(image) == list:
         images = [img for img in image if os.path.isfile(img)]
         print('before showing slideshow')
-        print("image command:\n", " ".join(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", delay] + images))
+        # print("image command:\n", " ".join(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
+        #                   "--slideshow", "-d", delay, *images]))
 
         subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
                           "--slideshow", "-d", delay, " ".join(images)])
@@ -343,7 +343,10 @@ class FAQ_PAT(object):
                 # img = Image.open(image)
                 # img.show()
                 # showPIL(img)
-            except:
+            except Exception as inst:
+                print(type(inst))  # the exception instance
+                print(inst.args)  # arguments stored in .args
+                print(inst)  # __str__ allows args to be printed directly,
                 print("image file not found:", image)
 
     def _play_mp3(self, file):
