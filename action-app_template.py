@@ -91,7 +91,7 @@ class FAQ_PAT(object):
         print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
         for index, row in response.iterrows():
-            mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
+            mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
             print("image:", row["image"])
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
