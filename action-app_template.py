@@ -65,8 +65,8 @@ class FAQ_PAT(object):
         self.config = None
         self.tables = {}
         self.mp3_only = mp3_only
-
         self.intents = ["Explain", "Purpose", "Availability"]
+        self._get_tables()
         # start listening to MQTT
 
     def show_image(self, image, delay=7):
