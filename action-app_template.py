@@ -33,6 +33,7 @@ def insert_image(image, delay=7):
             subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE])
     elif type(image) == list:
         images = [img for img in image if os.path.isfile(img)]
+        print('before showing slideshow')
         subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
                           "--slideshow", "-d", delay] + images)
         print("image command:\n", ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
