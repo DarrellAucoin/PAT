@@ -28,7 +28,7 @@ def play_mp3(path):
     # subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
 
 
-def insert_image(image, delay=7):
+def insert_image(image=None, delay=7):
     if type(image) == str and ";" in image:
         images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
         image = [img for img in images if os.path.isfile(img)]
@@ -223,6 +223,8 @@ if __name__ == "__main__":
         mp3_only = True
     if "DEBUG" in sys.argv:
         DEBUG = True
+    insert_image()
+    insert_image()
     subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
     PAT_avatar.start_blocking()
