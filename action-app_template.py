@@ -34,7 +34,7 @@ def insert_image(image, delay=7):
     elif type(image) == list:
         images = [img for img in image if os.path.isfile(img)]
         subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", delay, *images])
+                          "--slideshow", "-d", delay, " ".join(images)])
 
 
 
