@@ -38,7 +38,7 @@ def insert_image(image, delay=7):
         #                   "--slideshow", "-d", delay, *images]))
 
         subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", str(delay), " ".join(images)])
+                          "--slideshow", "-d", str(delay), *images])
 
 
 
