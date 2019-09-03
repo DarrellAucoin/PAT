@@ -34,10 +34,12 @@ def insert_image(image, delay=7):
     elif type(image) == list:
         images = [img for img in image if os.path.isfile(img)]
         print('before showing slideshow')
+        print("image command:\n", " ".join(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
+                          "--slideshow", "-d", delay] + images))
+
         subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", delay] + images)
-        print("image command:\n", ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", delay] + images)
+                          "--slideshow", "-d", delay, " ".join(images)])
+
 
 
 
