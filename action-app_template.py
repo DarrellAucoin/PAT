@@ -32,17 +32,16 @@ def insert_image(image, delay=7):
     if type(image) == str and ";" in image:
         images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
         image = [img for img in images if os.path.isfile(img)]
-        # subprocess.Popen(['xdotool', 'key', "Escape"])
         args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", "--slideshow",
                 "-d", str(delay), *image]
     elif type(image) == str and os.path.isfile(os.path.join(ROOT_DIR, "images", image)):
         image = os.path.join(ROOT_DIR, "images", image)
-        # subprocess.Popen(['xdotool', 'key', "Escape"])
         args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
     else:
         image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
         args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
     print("image files:", image)
+    subprocess.Popen(['xdotool', 'key', "Escape"])
     subprocess.Popen(args=args)
 
 
@@ -64,6 +63,7 @@ class FAQ_PAT(object):
         print("In __init__ of Template")
 
         self.config = None
+        self.image_up = False
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability"]
