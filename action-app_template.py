@@ -27,20 +27,24 @@ def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
     # subprocess.Popen([f'ssh pi@localhost "mpg123 -q {path}']).wait()
 
+
 def insert_image(image, delay=7):
-    if type(image) == list:
-        images = [img for img in image if os.path.isfile(img)]
-        subprocess.Popen(args=['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up",
-                          "--slideshow", "-d", str(delay), *images],
-                         preexec_fn=['xdotool', 'key', "Escape"])
-    elif type(image) == str and os.path.isfile(image):
+    if image == str and ";" in image:
+        images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
+        image = [img for img in images if os.path.isfile(img)]
         # subprocess.Popen(['xdotool', 'key', "Escape"])
-        subprocess.Popen(args=['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image],
-                             preexec_fn=['xdotool', 'key', "Escape"])
+        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", "--slideshow",
+                "-d", str(delay), *image]
+    elif type(image) == str and os.path.isfile(os.path.join(ROOT_DIR, "images", image)):
+        image = os.path.join(ROOT_DIR, "images", image)
+        # subprocess.Popen(['xdotool', 'key', "Escape"])
+        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
     else:
-        # subprocess.Popen(['xdotool', 'key', "Escape"])
-        subprocess.Popen(['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", BG_IMAGE],
-                         preexec_fn=['xdotool', 'key', "Escape"])
+        image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
+        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
+    subprocess.Popen(args=args, preexec_fn=['xdotool', 'key', "Escape"])
+    print("image files:", image)
+
 
 class FAQ_PAT(object):
     """Class used to wrap action code with mqtt connection
@@ -66,16 +70,15 @@ class FAQ_PAT(object):
         # start listening to MQTT
 
     def show_image(self, image, delay=7):
-        if image is None or type(image) not in [str, list]:
+        if image is None or type(image) not in [str, list] or not self.mp3_only:
             return None
-        elif self.mp3_only:
-            try:
-                insert_image(image, delay=delay)
-            except Exception as inst:
-                print(type(inst))  # the exception instance
-                print(inst.args)  # arguments stored in .args
-                print(inst)  # __str__ allows args to be printed directly,
-                print("image file not found:", image)
+        try:
+            insert_image(image, delay=delay)
+        except Exception as inst:
+            print(type(inst))  # the exception instance
+            print(inst.args)  # arguments stored in .args
+            print(inst)  # __str__ allows args to be printed directly,
+            print("image file not found:", image)
 
     def _play_mp3(self, file):
         if self.mp3_only:
@@ -87,18 +90,10 @@ class FAQ_PAT(object):
         print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
         for index, row in response.iterrows():
-            file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
-            if row["image"] is None or type(row["image"]) != str:
-                image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
-            elif type(row["image"]) == str and ";" in row["image"]:
-                images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in row["image"].split(";")]
-                image = [img for img in images if os.path.isfile(os.path.join(ROOT_DIR, "images", img))]
-                print("image files:", image)
-            elif type(row["image"]) == str:
-                image = os.path.join(ROOT_DIR, "images", row["image"])
-            print("image:", image)
-            self.show_image(image, )
-            self._play_mp3(file=file)
+            mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
+            print("image:", row["image"])
+            self.show_image(row["image"], delay=row["delay"])
+            self._play_mp3(file=mp3_file)
 
     @staticmethod
     def _get_slots(intent_message, slot_names=[]):
