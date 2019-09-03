@@ -367,8 +367,9 @@ class FAQ_PAT(object):
             file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"])
             if row["image"] is not None and type(row["image"]) == str:
                 if ";" in row["image"]:
-                    images = [os.path.join(ROOT_DIR, "images", img) for img in row["image"]]
+                    images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in row["image"].split(";")]
                     image = [img for img in images if os.path.isfile(os.path.join(ROOT_DIR, "images", img))]
+                    print("image files:", image)
                 else:
                     image = os.path.join(ROOT_DIR, "images", row["image"])
             else:
