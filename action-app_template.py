@@ -132,7 +132,6 @@ class FAQ_PAT(object):
         self.play_purpose(slots["Components"], slots["People"])
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
-
     def play_purpose(self, component, people):
         response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
                                           self.tables["Purpose"]["people"] == people]#.sort_values(by=["play_order"])
@@ -179,7 +178,6 @@ class FAQ_PAT(object):
         '''
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         pass
-
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
