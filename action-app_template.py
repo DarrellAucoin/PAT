@@ -42,8 +42,9 @@ def insert_image(image, delay=7):
     else:
         image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
         args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
-    subprocess.Popen(args=args)
     print("image files:", image)
+    subprocess.Popen(args=args)
+
 
 
 class FAQ_PAT(object):
