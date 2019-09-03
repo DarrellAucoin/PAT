@@ -29,7 +29,7 @@ def play_mp3(path):
 
 
 def insert_image(image, delay=7):
-    if image == str and ";" in image:
+    if type(image) == str and ";" in image:
         images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
         image = [img for img in images if os.path.isfile(img)]
         # subprocess.Popen(['xdotool', 'key', "Escape"])
