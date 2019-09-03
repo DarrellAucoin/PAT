@@ -419,7 +419,7 @@ class FAQ_PAT(object):
         hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
         self.play_purpose(slots["Components"], slots["People"])
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
 
     def play_purpose(self, component, people):
@@ -434,7 +434,7 @@ class FAQ_PAT(object):
         else:
             location = "default"
         self.play_availability(location)
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_availability(self, location):
         response = self.tables["Availability"][self.tables["Availability"]["location"] \
@@ -444,7 +444,7 @@ class FAQ_PAT(object):
     def intent_bye(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
         self.play_bye()
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # if need to speak the execution result by tts
         # Hermes.publish_start_session_notification(intent_message.site_id,
         #                                             "bye has been done")
@@ -456,7 +456,7 @@ class FAQ_PAT(object):
     def intent_hello(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
         self.play_hello()
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_hello(self):
         pass
@@ -468,7 +468,7 @@ class FAQ_PAT(object):
         '''
         Not sure what to do here
         '''
-        hermes.publish_start_session_notification(intent_message.site_id, "", "")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         pass
 
 
