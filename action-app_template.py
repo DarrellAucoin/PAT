@@ -21,7 +21,7 @@ RED = (255, 0, 0)
 screen_size = (1024, 600)
 PAT_position = (-250, 100)
 DEBUG = False
-BG_IMAGE = "space.jpg"
+BG_IMAGE = "CSA_logo.jpg"
 
 def play_mp3(path):
     subprocess.Popen(['mpg123', '-q', path]).wait()
