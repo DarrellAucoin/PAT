@@ -29,21 +29,21 @@ def play_mp3(path):
 
 
 def insert_image(image=None, delay=7):
-    if type(image) == str and ";" in image:
+    args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up"]
+    if type(image) != str:
+        image = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
+    elif ";" in image:
         images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
         image = [img for img in images if os.path.isfile(img)]
-        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", "--slideshow",
-                "-d", str(delay), *image]
-    elif type(image) == str and os.path.isfile(os.path.join(ROOT_DIR, "images", image)):
-        image = os.path.join(ROOT_DIR, "images", image)
-        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
+        args = args + ["--slideshow", "-d", str(delay)]
+    elif os.path.isfile(os.path.join(ROOT_DIR, "images", image)):
+        image = [os.path.join(ROOT_DIR, "images", image)]
     else:
-        image = os.path.join(ROOT_DIR, "images", BG_IMAGE)
-        args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", image]
+        image = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
+    args = args + image
     print("image files:", image)
     subprocess.Popen(['xdotool', 'key', "Escape"])
     subprocess.Popen(args=args)
-
 
 
 class FAQ_PAT(object):
@@ -161,10 +161,11 @@ class FAQ_PAT(object):
     def play_bye(self):
         response = self.tables["bye"]
         self.talk_animation(response, intent="bye")
-        for i in range(3):
-            subprocess.Popen(['xdotool', 'key', "Escape"])
+
         if self.mp3_only:
-             sys.exit()
+            for i in range(3):
+                subprocess.Popen(['xdotool', 'key', "Escape"])
+            sys.exit()
 
     def intent_hello(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
