@@ -64,7 +64,7 @@ class FAQ_PAT(object):
 
         self.config = None
         self.image_up = False
-        self.introduction = False
+        self.introduction = True
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello"]
@@ -173,7 +173,7 @@ class FAQ_PAT(object):
     def play_hello(self):
         if self.introduction:
             intro = "yes"
-            self.introduction = True
+            self.introduction = False
         else:
             intro = "no"
         response = self.tables["hello"][self.tables["hello"]["introduction"] == intro]
