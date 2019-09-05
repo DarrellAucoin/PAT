@@ -67,7 +67,7 @@ class FAQ_PAT(object):
         self.introduction = True
         self.tables = {}
         self.mp3_only = mp3_only
-        self.intents = ["Explain", "Purpose", "Availability", "hello"]
+        self.intents = ["Explain", "Purpose", "Availability", "hello", "bye"]
         self._get_tables()
         # start listening to MQTT
 
@@ -159,10 +159,12 @@ class FAQ_PAT(object):
         self.play_bye()
 
     def play_bye(self):
-        # if self.mp3_only:
-        #      sys.exit()
-        pass
-        # self.PAT.talk_animation(response, intent="bye")
+        response = self.tables["bye"]
+        self.talk_animation(response, intent="bye")
+        for i in range(3):
+            subprocess.Popen(['xdotool', 'key', "Escape"])
+        if self.mp3_only:
+             sys.exit()
 
     def intent_hello(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
