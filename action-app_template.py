@@ -64,9 +64,10 @@ class FAQ_PAT(object):
 
         self.config = None
         self.image_up = False
+        self.introduction = False
         self.tables = {}
         self.mp3_only = mp3_only
-        self.intents = ["Explain", "Purpose", "Availability"]
+        self.intents = ["Explain", "Purpose", "Availability", "hello"]
         self._get_tables()
         # start listening to MQTT
 
@@ -165,11 +166,17 @@ class FAQ_PAT(object):
     def intent_hello(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
         self.play_hello()
+
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_hello(self):
-        pass
-        # self.PAT.talk_animation(response, intent="hello")
+        if self.introduction:
+            intro = "yes"
+            self.introduction = True
+        else:
+            intro = "no"
+        response = self.tables["hello"][self.tables["hello"]["introduction"] == intro]
+        self.talk_animation(response, intent="hello")
 
     def intent_show_menu(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
