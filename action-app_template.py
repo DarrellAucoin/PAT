@@ -200,16 +200,14 @@ class FAQ_PAT(object):
             print("coming_intent:", coming_intent)
             if coming_intent == 'Explain':
                 self.intent_explain(hermes, intent_message)
-            elif coming_intent == 'Purpose':
-                self.intent_purpose(hermes, intent_message)
-            elif coming_intent == 'Availability':
-                self.intent_availability(hermes, intent_message)
+            # elif coming_intent == 'Purpose':
+            #     self.intent_purpose(hermes, intent_message)
+            # elif coming_intent == 'Availability':
+            #     self.intent_availability(hermes, intent_message)
             elif coming_intent == 'hello':
                 self.intent_hello(hermes, intent_message)
             elif coming_intent == 'bye':
                 self.intent_bye(hermes, intent_message)
-            elif coming_intent == 'Show_Menu':
-                self.intent_show_menu(hermes, intent_message)
         except Exception as inst:
             print(type(inst))  # the exception instance
             print(inst.args)  # arguments stored in .args
