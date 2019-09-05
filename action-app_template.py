@@ -114,6 +114,7 @@ class FAQ_PAT(object):
         print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
+            print("intent:", intent)
             print(self.tables[intent].columns)
         print("got all tables")
 
