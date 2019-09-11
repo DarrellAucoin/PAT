@@ -29,19 +29,18 @@ def play_mp3(path):
 
 
 def insert_image(image=None, delay=7):
-    args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up"]
+    args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", "--background-pattern=white"]
     if type(image) != str:
-        image = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
-    elif ";" in image:
-        images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
-        image = [img for img in images if os.path.isfile(img)]
-        args = args + ["--slideshow", "-d", str(delay)]
-    elif os.path.isfile(os.path.join(ROOT_DIR, "images", image)):
-        image = [os.path.join(ROOT_DIR, "images", image)]
+        images = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
     else:
-        image = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
-    args = args + image
-    print("image files:", image)
+        images = [os.path.join(ROOT_DIR, "images", img.strip()) for img in image.split(";")]
+        images = [img for img in images if os.path.isfile(img)]
+    if len(images) > 1:
+        args = args + ["--slideshow", "-d", str(delay)]
+    elif len(images) == 0:
+        images = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
+    args = args + images
+    print("image files:", images)
     subprocess.Popen(['xdotool', 'key', "Escape"])
     subprocess.Popen(args=args)
 
@@ -67,7 +66,7 @@ class FAQ_PAT(object):
         self.introduction = True
         self.tables = {}
         self.mp3_only = mp3_only
-        self.intents = ["Explain", "Purpose", "Availability", "hello", "bye"]
+        self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
         self._get_tables()
         # start listening to MQTT
 
@@ -102,7 +101,8 @@ class FAQ_PAT(object):
         slots = {}
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
-            slots[slot_name] = v[-1].slot_value.value.value
+            for val in v:
+                slots[slot_name] = slots.get(slot_name, []) + [val.slot_value.value.value]
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
         for slot_name in slot_names:
@@ -111,20 +111,27 @@ class FAQ_PAT(object):
         return slots
 
     def _get_tables(self):
-        print("in _get_tables()")
+        # print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
             print("intent:", intent)
-            print(self.tables[intent].columns)
-        print("got all tables")
+            # print(self.tables[intent].columns)
+        # print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components"])
-        self.play_explain(slots["Components"])
+        if len(slots["Components"]) == 0:
+            slots["Components"] = ["default"]
+            # self.play_explain(slots["Components"][0])
+        if len(slots["Components"]) >= 2 and "appholo" in slots["Components"]:
+            slots["Components"].remove("appholo")
+        if len(slots["Components"]) >= 2 and "gestures" in slots["Components"]:
+            slots["Components"].remove("gestures")
+        self.play_explain(slots["Components"][0])
 
     def play_explain(self, component):
-        print("inside play_explain")
+        # print("inside play_explain")
         response = self.tables["Explain"][self.tables["Explain"]["component"] == component]#.sort_values(by=["play_order"])
 
         self.talk_animation(response, intent="explain")
@@ -132,7 +139,16 @@ class FAQ_PAT(object):
     def intent_purpose(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
-        self.play_purpose(slots["Components"], slots["People"])
+        if len(slots["Components"]) == 0:
+            slots["Components"] = ["default"]
+        if len(slots["Components"]) >= 2 and "appholo" in slots["Components"]:
+            slots["Components"].remove("appholo")
+        if len(slots["Components"]) >= 2 and "gestures" in slots["Components"]:
+            slots["Components"].remove("gestures")
+
+        if len(slots["People"]) == 0:
+            slots["People"] = ["default"]
+        self.play_purpose(slots["Components"][0], slots["People"][0])
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_purpose(self, component, people):
@@ -142,11 +158,15 @@ class FAQ_PAT(object):
 
     def intent_availability(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
-        if len(intent_message.slots.Location) > 0:
-            location = intent_message.slots.Location.first().value
-        else:
-            location = "default"
-        self.play_availability(location)
+        slots = self._get_slots(intent_message, slot_names=["Location"])
+        if len(slots["Location"]) == 0:
+            slots["Location"] = ["default"]
+
+        # if len(intent_message.slots.Location) > 0:
+        #     location = intent_message.slots.Location.first().value
+        # else:
+        #     location = "default"
+        self.play_availability(slots["Location"][0])
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_availability(self, location):
@@ -182,17 +202,19 @@ class FAQ_PAT(object):
         response = self.tables["hello"][self.tables["hello"]["introduction"] == intro]
         self.talk_animation(response, intent="hello")
 
-    def intent_show_menu(self, hermes, intent_message):
+    def intent_none(self, hermes, intent_message):
         hermes.publish_end_session(intent_message.session_id, "")
-
-        '''
-        Not sure what to do here
-        '''
+        self.play_none()
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-        pass
+
+    def play_none(self):
+        response = self.tables["none"]
+        self.talk_animation(response, intent="none")
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
+        if self.mp3_only:
+            subprocess.Popen(["pkill", "mpg123"])
         try:
             coming_intent = intent_message.intent.intent_name
             if ':' in coming_intent:
@@ -208,6 +230,8 @@ class FAQ_PAT(object):
                 self.intent_hello(hermes, intent_message)
             elif coming_intent == 'bye':
                 self.intent_bye(hermes, intent_message)
+            else:
+                self.intent_none(hermes, intent_message)
         except Exception as inst:
             print(type(inst))  # the exception instance
             print(inst.args)  # arguments stored in .args
