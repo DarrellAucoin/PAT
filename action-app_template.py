@@ -114,7 +114,7 @@ class FAQ_PAT(object):
         # print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
-            print("intent:", intent)
+            # print("intent:", intent)
             # print(self.tables[intent].columns)
         # print("got all tables")
 
@@ -258,6 +258,6 @@ if __name__ == "__main__":
         DEBUG = True
     insert_image()
     insert_image()
-    #subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
+    subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
     PAT_avatar.start_blocking()
