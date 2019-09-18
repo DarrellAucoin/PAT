@@ -129,7 +129,7 @@ class FAQ_PAT(object):
         if self.wake_word and not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/endSession",
                            payload={"sessionId": intent_json["sessionId"]})
-        else:
+        elif not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/continueSession",
                            payload={"sessionId": intent_json["sessionId"],
                                     "text": ""})
