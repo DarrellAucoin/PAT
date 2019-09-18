@@ -355,7 +355,7 @@ class FAQ_PAT(object):
     '''
 
 if __name__ == "__main__":
-    mp3_only = False
+    mp3_only = True
     wake_word = False
     if "mp3_only" in sys.argv:
         mp3_only = True
