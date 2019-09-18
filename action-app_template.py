@@ -81,6 +81,9 @@ class FAQ_PAT(object):
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
+        self.intent_slots = {"Explain": ["Components"],
+                             "Purpose": ["Components", "People"],
+                             "Availability": ["Location"]}
         self._get_tables()
 
         # start listening to MQTT
@@ -206,9 +209,11 @@ class FAQ_PAT(object):
                 self.introduction = False
             else:
                 response = response[response["introduction"] == "no"]
+        print("slot_dict:", slots_dict)
         for slot_name, slot_value in slots_dict.items():
             if slot_name in response.columns:
                 response = response[response[slot_name] == slot_value[0]]
+        print("response:", response)
         return response
     '''
     def intent_explain(self, intent_message):
