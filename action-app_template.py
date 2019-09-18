@@ -200,7 +200,7 @@ class FAQ_PAT(object):
                 response = response[response["introduction"] == "no"]
         for slot_name, slot_value in slots_dict:
             if slot_name in response.columns:
-                response = response[response[slot_name] == slot_value]
+                response = response[response[slot_name] == slot_value[0]]
         return response
     '''
     def intent_explain(self, intent_message):
