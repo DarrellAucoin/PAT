@@ -127,13 +127,13 @@ class FAQ_PAT(object):
             sys.exit()
         finally:
             print(f'[Received] intent: {intent_name}')
-        if self.wake_word:
-            client.publish(topic="hermes/dialogueManager/endSession",
-                           payload={"sessionId":intent_json["sessionId"]})
         if "bye" == coming_intent and self.mp3_only:
             for i in range(3):
                 subprocess.Popen(['xdotool', 'key', "Escape"])
             sys.exit()
+        if self.wake_word:
+            client.publish(topic="hermes/dialogueManager/endSession",
+                           payload={"sessionId":intent_json["sessionId"]})
 
     def show_image(self, image, delay=7):
         if image is None or type(image) not in [str, list] or not self.mp3_only:
