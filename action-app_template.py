@@ -106,8 +106,9 @@ class FAQ_PAT(object):
                 slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)
                 print("slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)")
                 response = self._get_response(coming_intent, slots_dict)
+                print("response:", response)
                 print("response = self._get_response(coming_intent, slots_dict)")
-                self.talk_animation(response, intent=coming_intent)
+                # self.talk_animation(response, intent=coming_intent)
                 print("self.talk_animation(response, intent=coming_intent)")
         except Exception as inst:
             print(type(inst))  # the exception instance
