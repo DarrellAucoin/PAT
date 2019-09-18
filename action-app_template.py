@@ -258,6 +258,9 @@ if __name__ == "__main__":
         DEBUG = True
     insert_image()
     insert_image()
-    subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
+    if "hdmi-sound" in sys.argv:
+        subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
+    else:
+        subprocess.Popen(['amixer', 'cset', "numid=3", "1"])
     PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
     PAT_avatar.start_blocking()

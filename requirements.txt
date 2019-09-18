@@ -1,7 +1,9 @@
 hermes-python>=0.1
+paho-mqtt>=1.4
 pygame>=1.9.6
-# pygame-menu>=2.0.4
 pandas>=0.25
+# pygame-menu>=2.0.4
+
 # pillow>=6.1
 # imageio>=2.5
 # visvis>=1.11
