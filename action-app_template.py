@@ -3,14 +3,13 @@
 
 #from snipsTools import SnipsConfigParser
 
-# from hermes_python.hermes import Hermes
+from hermes_python.hermes import Hermes
 import paho.mqtt.client as mqtt
 from hermes_python.ontology import *
 import os
 import subprocess
 import pandas as pd
 import sys
-import json
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -58,7 +57,7 @@ class FAQ_PAT(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, wake_word=True, mp3_only=False):
+    def __init__(self, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -71,72 +70,11 @@ class FAQ_PAT(object):
         self.config = None
         self.image_up = False
         self.introduction = True
-        self.wake_word = wake_word
-        # self.mqtt_client = mqtt_client
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
-        self.intent_slots = {"Explain": ["Components"],
-                             "Purpose": ["Components", "People"],
-                             "Availability": ["Location"]}
         self._get_tables()
-
         # start listening to MQTT
-
-    def on_message(self, client, userdata, msg):
-        if self.mp3_only:
-            subprocess.Popen(["pkill", "mpg123"])
-        # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
-        # Parse the json response
-        intent_json = json.loads(msg.payload)
-        if not self.mp3_only:
-            client.publish(topic="hermes/dialogueManager/endSession",
-                           payload={"sessionId": intent_json["sessionId"]})
-            # client.publish(topic="hermes/dialogueManager/sessionEnded",
-            #                payload={"sessionId": intent_json["sessionId"],
-            #                         "siteId": "on_message",
-            #                         })
-        intent_name = intent_json['intent']['intentName']
-        slots = intent_json['slots']
-        print('Intent {}'.format(intent_name))
-        print("Intent json:", intent_json)
-        try:
-            coming_intent = intent_name
-            if ':' in coming_intent:
-                coming_intent = coming_intent.split(":")[1]
-            print("coming_intent:", coming_intent)
-            if coming_intent in self.intents:
-
-                slots_dict = FAQ_PAT._get_slots(slots, coming_intent)
-                print("slots_dict = FAQ_PAT._get_slots(slots, coming_intent)")
-                slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)
-                print("slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)")
-                response = self._get_response(coming_intent, slots_dict)
-                print("response:", response)
-                print("response = self._get_response(coming_intent, slots_dict)")
-                self.talk_animation(response, intent=coming_intent)
-                print("self.talk_animation(response, intent=coming_intent)")
-        except Exception as inst:
-            print(type(inst))  # the exception instance
-            print(inst.args)  # arguments stored in .args
-            print(inst)  # __str__ allows args to be printed directly,
-            print("something got caught somewhere")
-            sys.exit()
-        finally:
-            print(f'[Received] intent: {intent_name}')
-        if "bye" == coming_intent and self.mp3_only:
-            for i in range(3):
-                subprocess.Popen(['xdotool', 'key', "Escape"])
-            sys.exit()
-        print("client:", client)
-        print("methods:", dir(client))
-        # if self.wake_word and not self.mp3_only:
-        #     client.publish(topic="hermes/dialogueManager/sessionEnded",
-        #                    payload={"sessionId": intent_json["sessionId"]})
-        # elif not self.mp3_only:
-        #     client.publish(topic="hermes/dialogueManager/continueSession",
-        #                    payload={"sessionId": intent_json["sessionId"],
-        #                             "text": ""})
 
     def show_image(self, image, delay=7):
         if image is None or type(image) not in [str, list] or not self.mp3_only:
@@ -158,72 +96,36 @@ class FAQ_PAT(object):
             return None
         print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
-        row = response.iloc[0]
-        mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
-        print("image:", row["image"])
-        self.show_image(row["image"], delay=row["delay"])
-        self._play_mp3(file=mp3_file)
+        for index, row in response.iterrows():
+            mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
+            print("image:", row["image"])
+            self.show_image(row["image"], delay=row["delay"])
+            self._play_mp3(file=mp3_file)
 
     @staticmethod
-    def _get_slots(slots, intent_name):
-        slots_dict = {}
-        for slot in slots:
-            slots_dict[slot['slotName']] = slots_dict.get(slot['slotName'], []) + [slot['value']['value']]
-        return slots_dict
-
-    @staticmethod
-    def _clean_up_slots(slots_dict, intent_name):
-        if "Explain" == intent_name:
-            slots_dict = FAQ_PAT._clean_up_slots_explain(slots_dict)
-        elif "Purpose" == intent_name:
-            slots_dict = FAQ_PAT._clean_up_slots_purpose(slots_dict)
-        elif "Availability" == intent_name:
-            slots_dict = FAQ_PAT._clean_up_slots_availability(slots_dict)
-        return slots_dict
-
-    @staticmethod
-    def _clean_up_slots_explain(slots_dict):
-        if "Components" not in slots_dict.keys() or len(slots_dict["Components"]) == 0:
-            slots_dict["Components"] = ["default"]
-            # self.play_explain(slots["Components"][0])
-        if len(slots_dict["Components"]) >= 2 and "appholo" in slots_dict["Components"]:
-            slots_dict["Components"].remove("appholo")
-        if len(slots_dict["Components"]) >= 2 and "gestures" in slots_dict["Components"]:
-            slots_dict["Components"].remove("gestures")
-        return slots_dict
-
-    @staticmethod
-    def _clean_up_slots_purpose(slots_dict):
-        slots_dict = FAQ_PAT._clean_up_slots_explain(slots_dict)
-        if "People" not in slots_dict.keys() or len(slots_dict["People"]) == 0:
-            slots_dict["People"] = ["default"]
-        return slots_dict
-
-    @staticmethod
-    def _clean_up_slots_availability(slots_dict):
-        if "Location" not in slots_dict.keys() or len(slots_dict["Location"]) == 0:
-            slots_dict["Location"] = ["default"]
-        return slots_dict
+    def _get_slots(intent_message, slot_names=[]):
+        slots = {}
+        for slot_name, v in intent_message.slots.items():
+            # Attributes of slot_value: from_c_repr, value, value_type
+            for val in v:
+                slots[slot_name] = slots.get(slot_name, []) + [val.slot_value.value.value]
+            # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
+            # slot_value
+        for slot_name in slot_names:
+            if slot_name not in slots.keys():
+                slots[slot_name] = "default"
+        return slots
 
     def _get_tables(self):
+        # print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
+            # print("intent:", intent)
+            # print(self.tables[intent].columns)
+        # print("got all tables")
 
-    def _get_response(self, intent_name, slots_dict):
-        response = self.tables[intent_name]
-        if "hello" == intent_name:
-            if self.introduction:
-                response = response[response["introduction"] == "yes"]
-                self.introduction = False
-            else:
-                response = response[response["introduction"] == "no"]
-        for slot_name, slot_value in slots_dict.items():
-            if slot_name in response.columns:
-                response = response[response[slot_name] == slot_value[0]]
-        return response
-    '''
-    def intent_explain(self, intent_message):
-        # hermes.publish_end_session(intent_message.session_id, "")
+    def intent_explain(self, hermes, intent_message):
+        hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
@@ -310,13 +212,14 @@ class FAQ_PAT(object):
         hermes.publish_end_session(intent_message.session_id, "")
         self.play_none()
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-    
+
     def play_none(self):
         response = self.tables["none"]
         self.talk_animation(response, intent="none")
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
+        print("hermes methods:", dir(hermes))
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
         try:
@@ -352,29 +255,19 @@ class FAQ_PAT(object):
     def start_blocking(self):
         with Hermes(MQTT_ADDR) as h:
             h.subscribe_intents(self.master_intent_callback).start()
-    '''
+
 
 if __name__ == "__main__":
     mp3_only = False
-    wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
         DEBUG = True
+    insert_image()
+    insert_image()
     if "hdmi-sound" in sys.argv:
         subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     else:
         subprocess.Popen(['amixer', 'cset', "numid=3", "1"])
-    # if "wake_word_off" in sys.argv:
-    #     wake_word = False
-    insert_image()
-    insert_image()
-    mqtt = mqtt.Client()
-    mqtt.on_connect = on_connect
-    PAT_avatar = FAQ_PAT(wake_word=wake_word, mp3_only=mp3_only)
-    mqtt.on_message = PAT_avatar.on_message
-    mqtt.connect('raspberrypi.local', 1883)
-    mqtt.loop_forever()
-
-    # PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
-    # PAT_avatar.start_blocking()
+    PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
+    PAT_avatar.start_blocking()
