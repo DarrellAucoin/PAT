@@ -126,13 +126,15 @@ class FAQ_PAT(object):
             for i in range(3):
                 subprocess.Popen(['xdotool', 'key', "Escape"])
             sys.exit()
+        print("client:", client)
+        print("methods:", dir(client))
         if self.wake_word:
             client.publish(topic="hermes/dialogueManager/endSession",
-                           payload={"sessionId":intent_json["sessionId"]})
+                           payload={"sessionId": intent_json["sessionId"]})
         else:
             client.publish(topic="hermes/dialogueManager/continueSession",
-                           payload={"sessionId":intent_json["sessionId"],
-                                    "text":""})
+                           payload={"sessionId": intent_json["sessionId"],
+                                    "text": ""})
 
     def show_image(self, image, delay=7):
         if image is None or type(image) not in [str, list] or not self.mp3_only:
@@ -365,8 +367,6 @@ if __name__ == "__main__":
     #     wake_word = False
     insert_image()
     insert_image()
-
-
     mqtt = mqtt.Client()
     mqtt.on_connect = on_connect
     PAT_avatar = FAQ_PAT(wake_word=wake_word, mp3_only=mp3_only)
