@@ -111,7 +111,7 @@ class FAQ_PAT(object):
                 response = self._get_response(coming_intent, slots_dict)
                 print("response:", response)
                 print("response = self._get_response(coming_intent, slots_dict)")
-                # self.talk_animation(response, intent=coming_intent)
+                self.talk_animation(response, intent=coming_intent)
                 print("self.talk_animation(response, intent=coming_intent)")
         except Exception as inst:
             print(type(inst))  # the exception instance
@@ -200,18 +200,15 @@ class FAQ_PAT(object):
 
     def _get_response(self, intent_name, slots_dict):
         response = self.tables[intent_name]
-
         if "hello" == intent_name:
             if self.introduction:
                 response = response[response["introduction"] == "yes"]
                 self.introduction = False
             else:
                 response = response[response["introduction"] == "no"]
-        print("slot_dict:", slots_dict)
         for slot_name, slot_value in slots_dict.items():
             if slot_name in response.columns:
                 response = response[response[slot_name] == slot_value[0]]
-        print("response:", response)
         return response
     '''
     def intent_explain(self, intent_message):
