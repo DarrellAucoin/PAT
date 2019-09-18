@@ -35,11 +35,6 @@ def on_connect(client, userdata, flags, rc):
     mqtt.subscribe('hermes/intent/#')
 
 
-
-
-
-
-
 def insert_image(image=None, delay=7):
     args = ['pqiv', '--fullscreen', "--hide-info-box", "--scale-images-up", "--background-pattern=white"]
     if type(image) != str:
@@ -94,8 +89,9 @@ class FAQ_PAT(object):
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
-        # client.publish(topic="hermes/dialogueManager/endSession",
-        #                payload={"sessionId": intent_json["sessionId"]})
+        if not self.mp3_only:
+            client.publish(topic="hermes/dialogueManager/endSession",
+                           payload={"sessionId": intent_json["sessionId"]})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
@@ -130,7 +126,7 @@ class FAQ_PAT(object):
             sys.exit()
         print("client:", client)
         print("methods:", dir(client))
-        if self.wake_word:
+        if self.wake_word and not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/endSession",
                            payload={"sessionId": intent_json["sessionId"]})
         else:
