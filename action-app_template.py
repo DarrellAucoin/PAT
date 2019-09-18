@@ -94,8 +94,8 @@ class FAQ_PAT(object):
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
-        client.publish(topic="hermes/dialogueManager/endSession",
-                       payload={"sessionId": intent_json["sessionId"]})
+        # client.publish(topic="hermes/dialogueManager/endSession",
+        #                payload={"sessionId": intent_json["sessionId"]})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
@@ -355,8 +355,8 @@ class FAQ_PAT(object):
     '''
 
 if __name__ == "__main__":
-    mp3_only = True
-    wake_word = False
+    mp3_only = False
+    wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
