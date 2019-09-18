@@ -349,7 +349,7 @@ if __name__ == "__main__":
     mqtt = mqtt.Client()
     mqtt.on_connect = on_connect
     PAT_avatar = FAQ_PAT(mqtt_client=mqtt, mp3_only=mp3_only)
-    mqtt.on_message = PAT_avatar.on_message()
+    mqtt.on_message = PAT_avatar.on_message
     mqtt.connect('raspberrypi.local', 1883)
     mqtt.loop_forever()
 
