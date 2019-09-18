@@ -89,8 +89,10 @@ class FAQ_PAT(object):
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
-        if True:
+        if not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/endSession",
+                           payload={"sessionId": intent_json["sessionId"]})
+            client.publish(topic="hermes/dialogueManager/sessionEnded",
                            payload={"sessionId": intent_json["sessionId"]})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
@@ -126,13 +128,13 @@ class FAQ_PAT(object):
             sys.exit()
         print("client:", client)
         print("methods:", dir(client))
-        if self.wake_word and not self.mp3_only:
-            client.publish(topic="hermes/dialogueManager/sessionEnded",
-                           payload={"sessionId": intent_json["sessionId"]})
-        elif not self.mp3_only:
-            client.publish(topic="hermes/dialogueManager/continueSession",
-                           payload={"sessionId": intent_json["sessionId"],
-                                    "text": ""})
+        # if self.wake_word and not self.mp3_only:
+        #     client.publish(topic="hermes/dialogueManager/sessionEnded",
+        #                    payload={"sessionId": intent_json["sessionId"]})
+        # elif not self.mp3_only:
+        #     client.publish(topic="hermes/dialogueManager/continueSession",
+        #                    payload={"sessionId": intent_json["sessionId"],
+        #                             "text": ""})
 
     def show_image(self, image, delay=7):
         if image is None or type(image) not in [str, list] or not self.mp3_only:
