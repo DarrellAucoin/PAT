@@ -63,7 +63,7 @@ class FAQ_PAT(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, mqtt_client, wake_word=True, mp3_only=False):
+    def __init__(self, wake_word=True, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -77,7 +77,7 @@ class FAQ_PAT(object):
         self.image_up = False
         self.introduction = True
         self.wake_word = wake_word
-        self.mqtt_client = mqtt_client
+        # self.mqtt_client = mqtt_client
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
@@ -91,14 +91,9 @@ class FAQ_PAT(object):
     def on_message(self, client, userdata, msg):
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
-
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
-        if not self.wake_word:
-            client.publish(topic="hermes/dialogueManager/continueSession",
-                           payload={"sessionId":intent_json["sessionId"],
-                                    "text":""})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
@@ -134,6 +129,10 @@ class FAQ_PAT(object):
         if self.wake_word:
             client.publish(topic="hermes/dialogueManager/endSession",
                            payload={"sessionId":intent_json["sessionId"]})
+        else:
+            client.publish(topic="hermes/dialogueManager/continueSession",
+                           payload={"sessionId":intent_json["sessionId"],
+                                    "text":""})
 
     def show_image(self, image, delay=7):
         if image is None or type(image) not in [str, list] or not self.mp3_only:
@@ -370,7 +369,7 @@ if __name__ == "__main__":
 
     mqtt = mqtt.Client()
     mqtt.on_connect = on_connect
-    PAT_avatar = FAQ_PAT(mqtt_client=mqtt, wake_word=wake_word, mp3_only=mp3_only)
+    PAT_avatar = FAQ_PAT(wake_word=wake_word, mp3_only=mp3_only)
     mqtt.on_message = PAT_avatar.on_message
     mqtt.connect('raspberrypi.local', 1883)
     mqtt.loop_forever()
