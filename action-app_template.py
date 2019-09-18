@@ -353,7 +353,7 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     mp3_only = False
-    wake_word = True
+    wake_word = False
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
@@ -362,8 +362,8 @@ if __name__ == "__main__":
         subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     else:
         subprocess.Popen(['amixer', 'cset', "numid=3", "1"])
-    if "wake_word_off" in sys.argv:
-        wake_word = False
+    # if "wake_word_off" in sys.argv:
+    #     wake_word = False
     insert_image()
     insert_image()
 
