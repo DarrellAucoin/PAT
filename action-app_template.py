@@ -63,7 +63,7 @@ class FAQ_PAT(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, mqtt_client, mp3_only=False):
+    def __init__(self, mqtt_client, wake_word=True, mp3_only=False):
         # get the configuration if needed
         '''
         try:
@@ -76,6 +76,7 @@ class FAQ_PAT(object):
         self.config = None
         self.image_up = False
         self.introduction = True
+        self.wake_word = wake_word
         self.mqtt_client = mqtt_client
         self.tables = {}
         self.mp3_only = mp3_only
@@ -90,9 +91,14 @@ class FAQ_PAT(object):
     def on_message(self, client, userdata, msg):
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
+
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
+        if not self.wake_word_off:
+            client.publish(topic="hermes/dialogueManager/continueSession",
+                           payload={"sessionId":intent_json["sessionId"],
+                                    "text":""})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
@@ -121,7 +127,9 @@ class FAQ_PAT(object):
             sys.exit()
         finally:
             print(f'[Received] intent: {intent_name}')
-
+        if self.wake_word:
+            client.publish(topic="hermes/dialogueManager/endSession",
+                           payload={"sessionId":intent_json["sessionId"]})
         if "bye" == coming_intent and self.mp3_only:
             for i in range(3):
                 subprocess.Popen(['xdotool', 'key', "Escape"])
@@ -345,20 +353,24 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     mp3_only = False
+    wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
         DEBUG = True
-    insert_image()
-    insert_image()
     if "hdmi-sound" in sys.argv:
         subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     else:
         subprocess.Popen(['amixer', 'cset', "numid=3", "1"])
+    if "wake_word_off" in sys.argv:
+        wake_word = False
+    insert_image()
+    insert_image()
+
 
     mqtt = mqtt.Client()
     mqtt.on_connect = on_connect
-    PAT_avatar = FAQ_PAT(mqtt_client=mqtt, mp3_only=mp3_only)
+    PAT_avatar = FAQ_PAT(mqtt_client=mqtt, wake_word_off=wake_word, mp3_only=mp3_only)
     mqtt.on_message = PAT_avatar.on_message
     mqtt.connect('raspberrypi.local', 1883)
     mqtt.loop_forever()
