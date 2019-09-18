@@ -125,7 +125,7 @@ class FAQ_PAT(object):
         # print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
@@ -143,7 +143,7 @@ class FAQ_PAT(object):
         self.talk_animation(response, intent="explain")
 
     def intent_purpose(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
@@ -163,7 +163,7 @@ class FAQ_PAT(object):
         self.talk_animation(response, intent="purpose")
 
     def intent_availability(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         slots = self._get_slots(intent_message, slot_names=["Location"])
         if len(slots["Location"]) == 0:
             slots["Location"] = ["default"]
@@ -181,7 +181,7 @@ class FAQ_PAT(object):
         self.talk_animation(response, intent="Availability")
 
     def intent_bye(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         self.play_bye()
 
     def play_bye(self):
@@ -194,7 +194,7 @@ class FAQ_PAT(object):
             sys.exit()
 
     def intent_hello(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         self.play_hello()
 
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
@@ -209,7 +209,7 @@ class FAQ_PAT(object):
         self.talk_animation(response, intent="hello")
 
     def intent_none(self, hermes, intent_message):
-        hermes.publish_end_session(intent_message.session_id, "")
+        # hermes.publish_end_session(intent_message.session_id, "")
         self.play_none()
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
@@ -219,6 +219,7 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
+        hermes.publish_continue_session(intent_message.session_id, "")
         print("hermes methods:", dir(hermes))
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
