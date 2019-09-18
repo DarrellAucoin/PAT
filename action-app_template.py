@@ -127,7 +127,7 @@ class FAQ_PAT(object):
         print("client:", client)
         print("methods:", dir(client))
         if self.wake_word and not self.mp3_only:
-            client.publish(topic="hermes/dialogueManager/endSession",
+            client.publish(topic="hermes/dialogueManager/sessionEnded",
                            payload={"sessionId": intent_json["sessionId"]})
         elif not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/continueSession",
