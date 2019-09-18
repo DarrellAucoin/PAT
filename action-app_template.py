@@ -94,6 +94,8 @@ class FAQ_PAT(object):
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
+        client.publish(topic="hermes/dialogueManager/endSession",
+                       payload={"sessionId": intent_json["sessionId"]})
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
