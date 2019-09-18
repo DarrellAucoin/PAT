@@ -92,8 +92,10 @@ class FAQ_PAT(object):
         if not self.mp3_only:
             client.publish(topic="hermes/dialogueManager/endSession",
                            payload={"sessionId": intent_json["sessionId"]})
-            client.publish(topic="hermes/dialogueManager/sessionEnded",
-                           payload={"sessionId": intent_json["sessionId"]})
+            # client.publish(topic="hermes/dialogueManager/sessionEnded",
+            #                payload={"sessionId": intent_json["sessionId"],
+            #                         "siteId": "on_message",
+            #                         })
         intent_name = intent_json['intent']['intentName']
         slots = intent_json['slots']
         print('Intent {}'.format(intent_name))
