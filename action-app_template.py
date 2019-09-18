@@ -100,10 +100,15 @@ class FAQ_PAT(object):
                 coming_intent = coming_intent.split(":")[1]
             print("coming_intent:", coming_intent)
             if coming_intent in self.intents:
+
                 slots_dict = FAQ_PAT._get_slots(slots, coming_intent)
+                print("slots_dict = FAQ_PAT._get_slots(slots, coming_intent)")
                 slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)
+                print("slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)")
                 response = self._get_response(coming_intent, slots_dict)
+                print("response = self._get_response(coming_intent, slots_dict)")
                 self.talk_animation(response, intent=coming_intent)
+                print("self.talk_animation(response, intent=coming_intent)")
         except Exception as inst:
             print(type(inst))  # the exception instance
             print(inst.args)  # arguments stored in .args
