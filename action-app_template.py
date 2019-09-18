@@ -10,6 +10,7 @@ import os
 import subprocess
 import pandas as pd
 import sys
+import json
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -57,7 +58,7 @@ class FAQ_PAT(object):
         Please change the name refering to your application
     """
 
-    def __init__(self, mp3_only=False):
+    def __init__(self, mp3_only=False, wake_word=True):
         # get the configuration if needed
         '''
         try:
@@ -70,6 +71,7 @@ class FAQ_PAT(object):
         self.config = None
         self.image_up = False
         self.introduction = True
+        self.wake_word = wake_word
         self.tables = {}
         self.mp3_only = mp3_only
         self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
@@ -143,7 +145,7 @@ class FAQ_PAT(object):
         self.talk_animation(response, intent="explain")
 
     def intent_purpose(self, hermes, intent_message):
-        # hermes.publish_end_session(intent_message.session_id, "")
+
         slots = self._get_slots(intent_message, slot_names=["Components", "People"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
@@ -155,7 +157,7 @@ class FAQ_PAT(object):
         if len(slots["People"]) == 0:
             slots["People"] = ["default"]
         self.play_purpose(slots["Components"][0], slots["People"][0])
-        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
+    # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_purpose(self, component, people):
         response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
@@ -219,7 +221,8 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-        hermes.publish_continue_session(intent_message.session_id, "")
+
+        # hermes.publish_continue_session(intent_message.session_id, "")
         print("hermes methods:", dir(hermes))
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
@@ -248,6 +251,12 @@ class FAQ_PAT(object):
             sys.exit()
         finally:
             print(f'[Received] intent: {intent_message.intent.intent_name}')
+            if self.wake_word:
+                return hermes.publish_end_session(intent_message.session_id, "")
+            else:
+                return hermes.publish_continue_session(intent_message.session_id, "",
+                                                       [f"{intent_message.intent.intent_name}"],
+                                                       custom_data=json.dumps(intent_message))
         # terminate the session first if not continue
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
@@ -260,6 +269,7 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     mp3_only = False
+    wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
@@ -270,5 +280,5 @@ if __name__ == "__main__":
         subprocess.Popen(['amixer', 'cset', "numid=3", "2"])
     else:
         subprocess.Popen(['amixer', 'cset', "numid=3", "1"])
-    PAT_avatar = FAQ_PAT(mp3_only=mp3_only)
+    PAT_avatar = FAQ_PAT(mp3_only=mp3_only, wake_word=wake_word)
     PAT_avatar.start_blocking()
