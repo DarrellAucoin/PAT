@@ -11,7 +11,6 @@ import subprocess
 import pandas as pd
 import sys
 import json
-import time
 
 CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
@@ -111,7 +110,6 @@ class FAQ_PAT(object):
                 print("slots_dict = FAQ_PAT._clean_up_slots(slots_dict, coming_intent)")
                 response = self._get_response(coming_intent, slots_dict)
                 print("response:", response)
-                time.sleep(60)
                 print("response = self._get_response(coming_intent, slots_dict)")
                 # self.talk_animation(response, intent=coming_intent)
                 print("self.talk_animation(response, intent=coming_intent)")
