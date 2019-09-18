@@ -144,11 +144,11 @@ class FAQ_PAT(object):
             return None
         print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
-        for index, row in response.iterrows():
-            mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
-            print("image:", row["image"])
-            self.show_image(row["image"], delay=row["delay"])
-            self._play_mp3(file=mp3_file)
+        row = response.iloc[0]
+        mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
+        print("image:", row["image"])
+        self.show_image(row["image"], delay=row["delay"])
+        self._play_mp3(file=mp3_file)
 
     @staticmethod
     def _get_slots(slots, intent_name):
