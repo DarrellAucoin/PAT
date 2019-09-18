@@ -95,7 +95,7 @@ class FAQ_PAT(object):
         # self.mqtt_client.publish("hermes/dialogueManager/continueSession")
         # Parse the json response
         intent_json = json.loads(msg.payload)
-        if not self.wake_word_off:
+        if not self.wake_word:
             client.publish(topic="hermes/dialogueManager/continueSession",
                            payload={"sessionId":intent_json["sessionId"],
                                     "text":""})
@@ -370,7 +370,7 @@ if __name__ == "__main__":
 
     mqtt = mqtt.Client()
     mqtt.on_connect = on_connect
-    PAT_avatar = FAQ_PAT(mqtt_client=mqtt, wake_word_off=wake_word, mp3_only=mp3_only)
+    PAT_avatar = FAQ_PAT(mqtt_client=mqtt, wake_word=wake_word, mp3_only=mp3_only)
     mqtt.on_message = PAT_avatar.on_message
     mqtt.connect('raspberrypi.local', 1883)
     mqtt.loop_forever()
