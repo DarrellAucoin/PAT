@@ -191,11 +191,13 @@ class FAQ_PAT(object):
 
     def _get_response(self, intent_name, slots_dict):
         response = self.tables[intent_name]
-        if "hello" == intent_name and self.introduction:
-            response = response[response["introduction"] == "yes"]
-            self.introduction = False
-        else:
-            response = response[response["introduction"] == "no"]
+
+        if "hello" == intent_name:
+            if self.introduction:
+                response = response[response["introduction"] == "yes"]
+                self.introduction = False
+            else:
+                response = response[response["introduction"] == "no"]
         for slot_name, slot_value in slots_dict:
             if slot_name in response.columns:
                 response = response[response[slot_name] == slot_value]
