@@ -221,7 +221,8 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-
+        data = json.loads(intent_message.custom_data)
+        print("data json:", data)
         # hermes.publish_continue_session(intent_message.session_id, "")
         print("hermes methods:", dir(hermes))
         if self.mp3_only:
@@ -256,7 +257,7 @@ class FAQ_PAT(object):
             else:
                 return hermes.publish_continue_session(intent_message.session_id, "",
                                                        [f"{intent_message.intent.intent_name}"],
-                                                       custom_data=json.dumps(intent_message))
+                                                       custom_data=json.dumps(data))
         # terminate the session first if not continue
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
