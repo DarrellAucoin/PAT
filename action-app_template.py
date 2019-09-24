@@ -31,7 +31,7 @@ def play_mp3(path):
 
 
 def on_connect(client, userdata, flags, rc):
-    print('Connected')
+    # print('Connected')
     mqtt.subscribe('hermes/intent/#')
 
 
@@ -47,7 +47,7 @@ def insert_image(image=None, delay=7):
     elif len(images) == 0:
         images = [os.path.join(ROOT_DIR, "images", BG_IMAGE)]
     args = args + images
-    print("image files:", images)
+    # print("image files:", images)
     subprocess.Popen(['xdotool', 'key', "Escape"])
     subprocess.Popen(args=args)
 
@@ -96,11 +96,11 @@ class FAQ_PAT(object):
     def talk_animation(self, response, intent="explain"):
         if not self.mp3_only:
             return None
-        print("inside talk_animation")
+        # print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
         for index, row in response.iterrows():
             mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
-            print("image:", row["image"])
+            # print("image:", row["image"])
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
@@ -221,8 +221,8 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-        print("methods of intent_message", dir(intent_message))
-        print(intent_message.custom_data)
+        # print("methods of intent_message", dir(intent_message))
+        # print(intent_message.custom_data)
         if self.wake_word:
             hermes.publish_end_session(intent_message.session_id, "")
         else:
@@ -231,7 +231,7 @@ class FAQ_PAT(object):
         # data = json.loads(intent_message.custom_data)
         # print("data json:", data)
         # hermes.publish_continue_session(intent_message.session_id, "")
-        print("hermes methods:", dir(hermes))
+        # print("hermes methods:", dir(hermes))
         if self.mp3_only:
             subprocess.Popen(["pkill", "mpg123"])
         try:
@@ -271,7 +271,7 @@ class FAQ_PAT(object):
 
 
 if __name__ == "__main__":
-    mp3_only = True#False
+    mp3_only = False
     wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
