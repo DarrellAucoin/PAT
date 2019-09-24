@@ -222,6 +222,7 @@ class FAQ_PAT(object):
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
         print("methods of intent_message", dir(intent_message))
+        print(intent_message.custom_data)
         if self.wake_word:
             hermes.publish_end_session(intent_message.session_id, "")
         else:
