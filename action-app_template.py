@@ -16,7 +16,7 @@ CONFIG_INI = "config.ini"
 ROOT_DIR = "/home/pi/PAT"
 MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
-MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
+MQTT_ADDR = f"{MQTT_IP_ADDR}:{MQTT_PORT}"
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -66,7 +66,7 @@ class FAQ_PAT(object):
         except :
             self.config = None
         '''
-        print("In __init__ of Template")
+        # print("In __init__ of Template")
 
         self.config = None
         self.image_up = False
@@ -221,8 +221,9 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-        data = json.loads(intent_message.custom_data)
-        print("data json:", data)
+        print("methods of intent_message", dir(intent_message))
+        # data = json.loads(intent_message.custom_data)
+        # print("data json:", data)
         # hermes.publish_continue_session(intent_message.session_id, "")
         print("hermes methods:", dir(hermes))
         if self.mp3_only:
@@ -270,7 +271,7 @@ class FAQ_PAT(object):
 
 if __name__ == "__main__":
     mp3_only = False
-    wake_word = False
+    wake_word = True
     if "mp3_only" in sys.argv:
         mp3_only = True
     if "DEBUG" in sys.argv:
