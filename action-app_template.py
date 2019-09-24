@@ -222,6 +222,11 @@ class FAQ_PAT(object):
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
         print("methods of intent_message", dir(intent_message))
+        if self.wake_word:
+            hermes.publish_end_session(intent_message.session_id, "")
+        else:
+            hermes.publish_continue_session(intent_message.session_id, "",
+                                            [f"{intent_message.intent.intent_name}"])
         # data = json.loads(intent_message.custom_data)
         # print("data json:", data)
         # hermes.publish_continue_session(intent_message.session_id, "")
@@ -253,12 +258,7 @@ class FAQ_PAT(object):
             sys.exit()
         finally:
             print(f'[Received] intent: {intent_message.intent.intent_name}')
-            if self.wake_word:
-                return hermes.publish_end_session(intent_message.session_id, "")
-            else:
-                return hermes.publish_continue_session(intent_message.session_id, "",
-                                                       [f"{intent_message.intent.intent_name}"],
-                                                       custom_data=json.dumps(data))
+
         # terminate the session first if not continue
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
         # more callback and if condition goes here...
