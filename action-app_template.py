@@ -107,7 +107,7 @@ class FAQ_PAT(object):
 
     def _get_slots(self, intent_message, slot_names=[]):
         slots = {}
-        df = self.tables[intent_message.intent.intent_name]
+        df = self.tables[intent_message.intent.intent_name.split(":")[1]]
         print("intent_message.slots:", intent_message.slots)
         print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
