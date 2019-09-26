@@ -105,24 +105,40 @@ class FAQ_PAT(object):
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
-    def _get_slots(self, intent, intent_message, slot_names=[]):
-        slots = {}
-        print("intent_message.slots:", intent_message.slots)
-        print("dir:", dir(intent_message.slots))
+    def _get_response(self, intent_message, slot_names=[]):
+        intent = intent_message.intent.intent_name
+        if ':' in intent:
+            intent = intent.split(":")[1]
+        response = self.tables[intent]
+        for slot in slot_names:
+            assert slot in response.columns, f"slot {slot} not in {intent} table"
+        # print("intent_message.slots:", intent_message.slots)
+        # print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
-            for val in v:
-                slots[slot_name] = slots.get(slot_name, []) + [val.slot_value.value.value]
-                print(f"{slot_name}:{val.slot_value.value.value}")
-            # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
-            # slot_value
-        df = self.tables[intent]
-        for slot_name in slot_names:
-            if slot_name not in slots.keys() or slots[slot_name][0] not in df[slot_name]:
-                slots[slot_name] = ["default"]
-
-        print("slots dictionary:", slots)
-        return slots
+            if slot_name in response.columns:
+                found_slot = False
+                for val in v:
+                    if val.slot_value.value.value in response[slot_name]:
+                        response = response[response[slot_name] == val.slot_value.value.value]
+                        # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
+                        # slot_name, slot_value
+                        found_slot = True
+                        break
+                if not found_slot:
+                    response = response[response[slot_name] == "default"]
+                try:
+                    slot_names.remove(slot_name)
+                except:
+                    print(f"{slot_name} not in provided slot_names: {slot_names}")
+        if len(response) == 1:
+            return response
+        else:
+            for slot_name in slot_names:
+                response = response[response[slot_name] == "default"]
+                if len(response) == 1:
+                    return response
+        return response
 
     def _get_tables(self):
         # print("in _get_tables()")
@@ -134,68 +150,23 @@ class FAQ_PAT(object):
 
     def intent_explain(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        slots = self._get_slots(intent="Explain", intent_message=intent_message, slot_names=["Components"])
-        if len(slots["Components"]) == 0:
-            slots["Components"] = ["default"]
-            # self.play_explain(slots["Components"][0])
-        if len(slots["Components"]) >= 2 and "appholo" in slots["Components"]:
-            slots["Components"].remove("appholo")
-        if len(slots["Components"]) >= 2 and "gestures" in slots["Components"]:
-            slots["Components"].remove("gestures")
-        self.play_explain(slots["Components"][0])
-
-    def play_explain(self, component):
-        # print("inside play_explain")
-        response = self.tables["Explain"][self.tables["Explain"]["Components"] == component]#.sort_values(by=["play_order"])
-
+        response = self._get_response(intent_message=intent_message, slot_names=["Components"])
         self.talk_animation(response, intent="explain")
 
     def intent_purpose(self, hermes, intent_message):
-
-        slots = self._get_slots(intent="Purpose", intent_message=intent_message, slot_names=["Components", "People"])
-        if len(slots["Components"]) == 0:
-            slots["Components"] = ["default"]
-        if len(slots["Components"]) >= 2 and "appholo" in slots["Components"]:
-            slots["Components"].remove("appholo")
-        if len(slots["Components"]) >= 2 and "gestures" in slots["Components"]:
-            slots["Components"].remove("gestures")
-
-        if len(slots["People"]) == 0:
-            slots["People"] = ["default"]
-        self.play_purpose(slots["Components"][0], slots["People"][0])
-    # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-
-    def play_purpose(self, component, people):
-        response = self.tables["Purpose"][self.tables["Purpose"]["component"] == component and
-                                          self.tables["Purpose"]["people"] == people]#.sort_values(by=["play_order"])
+        response = self._get_response(intent_message=intent_message, slot_names=["Components", "People"])
         self.talk_animation(response, intent="purpose")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def intent_availability(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        slots = self._get_slots(intent="Availability", intent_message=intent_message, slot_names=["Location"])
-        if len(slots["Location"]) == 0:
-            slots["Location"] = ["default"]
-        print("slots:", slots)
-        # if len(intent_message.slots.Location) > 0:
-        #     location = intent_message.slots.Location.first().value
-        # else:
-        #     location = "default"
-        self.play_availability(slots["Location"][0])
-        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-
-    def play_availability(self, location):
-        response = self.tables["Availability"][self.tables["Availability"]["Location"] \
-                                               == location]#.sort_values(by=["play_order"])
-        self.talk_animation(response, intent="Availability")
+        response = self._get_response(intent_message=intent_message, slot_names=["Location"])
+        self.talk_animation(response, intent="availability")
 
     def intent_bye(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        self.play_bye()
-
-    def play_bye(self):
         response = self.tables["bye"]
         self.talk_animation(response, intent="bye")
-
         if self.mp3_only:
             for i in range(3):
                 subprocess.Popen(['xdotool', 'key', "Escape"])
@@ -203,11 +174,6 @@ class FAQ_PAT(object):
 
     def intent_hello(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        self.play_hello()
-
-        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
-
-    def play_hello(self):
         if self.introduction:
             intro = "yes"
             self.introduction = False
@@ -216,14 +182,13 @@ class FAQ_PAT(object):
         response = self.tables["hello"][self.tables["hello"]["introduction"] == intro]
         self.talk_animation(response, intent="hello")
 
-    def intent_none(self, hermes, intent_message):
-        # hermes.publish_end_session(intent_message.session_id, "")
-        self.play_none()
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
-    def play_none(self):
+    def intent_none(self, hermes, intent_message):
+        # hermes.publish_end_session(intent_message.session_id, "")
         response = self.tables["none"]
         self.talk_animation(response, intent="none")
+        # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
