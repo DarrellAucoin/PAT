@@ -96,12 +96,9 @@ class FAQ_PAT(object):
     def talk_animation(self, response, intent="explain"):
         if not self.mp3_only:
             return None
-        # print("inside talk_animation")
         response = response[["response_text", "response_mp3", "image", "delay"]]
-        print("response:\n", response)
         for index, row in response.iterrows():
             mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
-            # print("image:", row["image"])
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
@@ -112,22 +109,15 @@ class FAQ_PAT(object):
         response = self.tables[intent]
         for slot in slot_names:
             assert slot in response.columns, f"slot {slot} not in {intent} table"
-        # print("intent_message.slots:", intent_message.slots)
-        # print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
             if slot_name in response.columns:
                 found_slot = False
                 for val in v:
-                    print("slot value:", val.slot_value.value.value)
-                    print("response:\n", response)
-                    # print(f"{val.slot_value.value.value} in the column {slot_name}: {val.slot_value.value.value in response[slot_name].values}")
-                    # print(f"IVATTS in the column {slot_name}: {'IVATTS' in response[slot_name].values}")
                     if val.slot_value.value.value in response[slot_name].values:
                         response = response[response[slot_name] == val.slot_value.value.value]
                         # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
                         # slot_name, slot_value
-                        print("response:\n", response)
                         found_slot = True
                         break
                 if not found_slot:
@@ -146,12 +136,8 @@ class FAQ_PAT(object):
         return response
 
     def _get_tables(self):
-        # print("in _get_tables()")
         for intent in self.intents:
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
-            # print("intent:", intent)
-            # print(self.tables[intent].columns)
-        # print("got all tables")
 
     def intent_explain(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
@@ -186,7 +172,6 @@ class FAQ_PAT(object):
             intro = "no"
         response = self.tables["hello"][self.tables["hello"]["introduction"] == intro]
         self.talk_animation(response, intent="hello")
-
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def intent_none(self, hermes, intent_message):
@@ -197,8 +182,6 @@ class FAQ_PAT(object):
 
     # --> Master callback function, triggered everytime an intent is recognized
     def master_intent_callback(self, hermes, intent_message):
-        # print("methods of intent_message", dir(intent_message))
-        # print(intent_message.custom_data)
         if self.wake_word:
             hermes.publish_end_session(intent_message.session_id, "")
         else:
