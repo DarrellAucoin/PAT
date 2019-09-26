@@ -244,8 +244,8 @@ class FAQ_PAT(object):
                 self.intent_explain(hermes, intent_message)
             # elif coming_intent == 'Purpose':
             #     self.intent_purpose(hermes, intent_message)
-            # elif coming_intent == 'Availability':
-            #     self.intent_availability(hermes, intent_message)
+            elif coming_intent == 'Availability':
+                self.intent_availability(hermes, intent_message)
             elif coming_intent == 'hello':
                 self.intent_hello(hermes, intent_message)
             elif coming_intent == 'bye':
