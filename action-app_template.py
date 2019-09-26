@@ -107,7 +107,6 @@ class FAQ_PAT(object):
 
     def _get_slots(self, intent, intent_message, slot_names=[]):
         slots = {}
-
         print("intent_message.slots:", intent_message.slots)
         print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
@@ -119,8 +118,8 @@ class FAQ_PAT(object):
             # slot_value
         df = self.tables[intent]
         for slot_name in slot_names:
-            if slot_name not in slots.keys() or slots[slot_name] not in df[slot_name]:
-                slots[slot_name] = "default"
+            if slot_name not in slots.keys() or slots[slot_name][0] not in df[slot_name]:
+                slots[slot_name] = ["default"]
 
         print("slots dictionary:", slots)
         return slots
