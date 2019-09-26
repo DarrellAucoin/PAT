@@ -123,6 +123,7 @@ class FAQ_PAT(object):
                         response = response[response[slot_name] == val.slot_value.value.value]
                         # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
                         # slot_name, slot_value
+                        print("response:\n", response)
                         found_slot = True
                         break
                 if not found_slot:
