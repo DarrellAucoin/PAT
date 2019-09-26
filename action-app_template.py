@@ -121,6 +121,7 @@ class FAQ_PAT(object):
                 for val in v:
                     print("slot value:", val.slot_value.value.value)
                     print("response:\n", response)
+                    print(f"{val.slot_value.value.value} in the column {slot_name}: {val.slot_value.value.value in response[slot_name]}")
                     if val.slot_value.value.value in response[slot_name]:
                         response = response[response[slot_name] == val.slot_value.value.value]
                         # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
