@@ -108,6 +108,8 @@ class FAQ_PAT(object):
     @staticmethod
     def _get_slots(intent_message, slot_names=[]):
         slots = {}
+        print("intent_message.slots:", intent_message.slots)
+        print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
             for val in v:
