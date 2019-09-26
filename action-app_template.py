@@ -105,10 +105,10 @@ class FAQ_PAT(object):
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
-    def _get_slots(self, intent_message, slot_names=[]):
+    def _get_slots(self, intent, intent_message, slot_names=[]):
         slots = {}
         print(intent_message.intent.intent_name.split(":")[1])
-        df = self.tables[intent_message.intent.intent_name.split(":")[1]]
+        df = self.tables[intent]
         print("intent_message.slots:", intent_message.slots)
         print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
@@ -135,7 +135,7 @@ class FAQ_PAT(object):
 
     def intent_explain(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        slots = self._get_slots(intent_message, slot_names=["Components"])
+        slots = self._get_slots(intent="Explain", intent_message=intent_message, slot_names=["Components"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
             # self.play_explain(slots["Components"][0])
@@ -153,7 +153,7 @@ class FAQ_PAT(object):
 
     def intent_purpose(self, hermes, intent_message):
 
-        slots = self._get_slots(intent_message, slot_names=["Components", "People"])
+        slots = self._get_slots(intent="Purpose", intent_message=intent_message, slot_names=["Components", "People"])
         if len(slots["Components"]) == 0:
             slots["Components"] = ["default"]
         if len(slots["Components"]) >= 2 and "appholo" in slots["Components"]:
@@ -173,7 +173,7 @@ class FAQ_PAT(object):
 
     def intent_availability(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
-        slots = self._get_slots(intent_message, slot_names=["Location"])
+        slots = self._get_slots(intent="Availability", intent_message=intent_message, slot_names=["Location"])
         if len(slots["Location"]) == 0:
             slots["Location"] = ["default"]
         print("slots:", slots)
