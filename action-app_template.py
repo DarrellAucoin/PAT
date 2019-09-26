@@ -108,8 +108,8 @@ class FAQ_PAT(object):
     @staticmethod
     def _get_slots(intent_message, slot_names=[]):
         slots = {}
-        print("intent_message.slots:", intent_message.slots)
-        print("dir:", dir(intent_message.slots))
+        # print("intent_message.slots:", intent_message.slots)
+        # print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
             for val in v:
@@ -119,7 +119,7 @@ class FAQ_PAT(object):
         for slot_name in slot_names:
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
-        print("slots dictionary:", slots)
+        # print("slots dictionary:", slots)
         return slots
 
     def _get_tables(self):
@@ -173,7 +173,7 @@ class FAQ_PAT(object):
         slots = self._get_slots(intent_message, slot_names=["Location"])
         if len(slots["Location"]) == 0:
             slots["Location"] = ["default"]
-
+        print("slots:", slots)
         # if len(intent_message.slots.Location) > 0:
         #     location = intent_message.slots.Location.first().value
         # else:
@@ -182,7 +182,7 @@ class FAQ_PAT(object):
         # hermes.publish_start_session_notification(intent_message.site_id, "", "")
 
     def play_availability(self, location):
-        response = self.tables["Availability"][self.tables["Availability"]["location"] \
+        response = self.tables["Availability"][self.tables["Availability"]["Location"] \
                                                == location]#.sort_values(by=["play_order"])
         self.talk_animation(response, intent="Availability")
 
