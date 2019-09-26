@@ -146,7 +146,7 @@ class FAQ_PAT(object):
 
     def play_explain(self, component):
         # print("inside play_explain")
-        response = self.tables["Explain"][self.tables["Explain"]["component"] == component]#.sort_values(by=["play_order"])
+        response = self.tables["Explain"][self.tables["Explain"]["Components"] == component]#.sort_values(by=["play_order"])
 
         self.talk_animation(response, intent="explain")
 
