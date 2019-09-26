@@ -105,9 +105,9 @@ class FAQ_PAT(object):
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
-    @staticmethod
-    def _get_slots(intent_message, slot_names=[]):
+    def _get_slots(self, intent_message, slot_names=[]):
         slots = {}
+        df = self.tables[intent_message.intentintent_name]
         print("intent_message.slots:", intent_message.slots)
         print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
@@ -118,8 +118,9 @@ class FAQ_PAT(object):
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
         for slot_name in slot_names:
-            if slot_name not in slots.keys():
+            if slot_name not in slots.keys() or slots[slot_name] not in df[slot_name]:
                 slots[slot_name] = "default"
+
         print("slots dictionary:", slots)
         return slots
 
