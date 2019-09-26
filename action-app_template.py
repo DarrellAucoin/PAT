@@ -107,8 +107,7 @@ class FAQ_PAT(object):
 
     def _get_slots(self, intent, intent_message, slot_names=[]):
         slots = {}
-        print(intent_message.intent.intent_name.split(":")[1])
-        df = self.tables[intent]
+
         print("intent_message.slots:", intent_message.slots)
         print("dir:", dir(intent_message.slots))
         for slot_name, v in intent_message.slots.items():
@@ -118,6 +117,7 @@ class FAQ_PAT(object):
                 print(f"{slot_name}:{val.slot_value.value.value}")
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
+        df = self.tables[intent]
         for slot_name in slot_names:
             if slot_name not in slots.keys() or slots[slot_name] not in df[slot_name]:
                 slots[slot_name] = "default"
