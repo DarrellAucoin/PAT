@@ -119,6 +119,7 @@ class FAQ_PAT(object):
         for slot_name in slot_names:
             if slot_name not in slots.keys():
                 slots[slot_name] = "default"
+        print("slots dictionary:", slots)
         return slots
 
     def _get_tables(self):
