@@ -114,7 +114,7 @@ class FAQ_PAT(object):
             # Attributes of slot_value: from_c_repr, value, value_type
             for val in v:
                 slots[slot_name] = slots.get(slot_name, []) + [val.slot_value.value.value]
-                print(f"{slot_name}:{val}")
+                print(f"{slot_name}:{val.slot_value.value.value}")
             # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value, slot_name
             # slot_value
         for slot_name in slot_names:
