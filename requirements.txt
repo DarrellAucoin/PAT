@@ -1,8 +1,7 @@
 hermes-python>=0.1
 paho-mqtt>=1.4
-pygame>=1.9.6
 pandas>=0.25
-json
+# json
 # pygame-menu>=2.0.4
 
 # pillow>=6.1

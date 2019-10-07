@@ -74,7 +74,12 @@ class FAQ_PAT(object):
         self.wake_word = wake_word
         self.tables = {}
         self.mp3_only = mp3_only
-        self.intents = ["Explain", "Purpose", "Availability", "hello", "bye", "none"]
+        self.intents = {"Explain": ["Components"],
+                        "Purpose": ["Components", "People"],
+                        "Availability": ["Location"],
+                        "hello": [],
+                        "bye": [],
+                        "none": []}
         self._get_tables()
         # start listening to MQTT
 
@@ -102,13 +107,12 @@ class FAQ_PAT(object):
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
 
-    def _get_response(self, intent_message, slot_names=[]):
+    def _get_response(self, intent_message):
         intent = intent_message.intent.intent_name
         if ':' in intent:
             intent = intent.split(":")[1]
         response = self.tables[intent]
-        for slot in slot_names:
-            assert slot in response.columns, f"slot {slot} not in {intent} table"
+        slot_names = self.intents[intent]
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
             if slot_name in response.columns:
@@ -136,9 +140,18 @@ class FAQ_PAT(object):
         return response
 
     def _get_tables(self):
-        for intent in self.intents:
+        for intent in self.intents.keys():
             self.tables[intent] = pd.read_csv(os.path.join(ROOT_DIR, "intents", f"{intent.lower()}.csv"))
+            slot_names = self.intents[intent]
+            for slot in slot_names:
+                assert slot in self.tables[intent].columns, f"slot {slot} not in {intent} table"
 
+    def play_intent(self, hermes, intent_message):
+        # hermes.publish_end_session(intent_message.session_id, "")
+        response = self._get_response(intent_message=intent_message)
+        self.talk_animation(response, intent=intent_message.intent.intent_name.split(":")[1])
+
+    '''
     def intent_explain(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
         response = self._get_response(intent_message=intent_message, slot_names=["Components"])
@@ -153,7 +166,7 @@ class FAQ_PAT(object):
         # hermes.publish_end_session(intent_message.session_id, "")
         response = self._get_response(intent_message=intent_message, slot_names=["Location"])
         self.talk_animation(response, intent="availability")
-
+    '''
     def intent_bye(self, hermes, intent_message):
         # hermes.publish_end_session(intent_message.session_id, "")
         response = self.tables["bye"]
@@ -198,16 +211,19 @@ class FAQ_PAT(object):
             if ':' in coming_intent:
                 coming_intent = coming_intent.split(":")[1]
             print("coming_intent:", coming_intent)
-            if coming_intent == 'Explain':
-                self.intent_explain(hermes, intent_message)
-            # elif coming_intent == 'Purpose':
-            #     self.intent_purpose(hermes, intent_message)
-            elif coming_intent == 'Availability':
-                self.intent_availability(hermes, intent_message)
-            elif coming_intent == 'hello':
+
+            if coming_intent == 'hello':
                 self.intent_hello(hermes, intent_message)
             elif coming_intent == 'bye':
                 self.intent_bye(hermes, intent_message)
+            elif coming_intent in self.intents.keys():
+                self.play_intent(hermes, intent_message)
+            # elif coming_intent == 'Explain':
+            #     self.intent_explain(hermes, intent_message)
+            # elif coming_intent == 'Purpose':
+            #     self.intent_purpose(hermes, intent_message)
+            # elif coming_intent == 'Availability':
+            #     self.intent_availability(hermes, intent_message)
             else:
                 self.intent_none(hermes, intent_message)
         except Exception as inst:
