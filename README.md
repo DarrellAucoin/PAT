@@ -51,6 +51,7 @@ pcm.!default {
 ```
 
 
+
 ```
 sudo npm install -g snips-sam
 sam devices
@@ -114,4 +115,18 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install npm@latest -g
 
+```
+
+Audio through hdmi:
+```
+sudo nano /boot/config.txt
+```
+
+Use arrows to get to the end of the file and add these 3 lines:
+```
+#Always force HDMI output and enable HDMI sound
+
+hdmi_force_hotplug=1
+
+hdmi_drive=2
 ```
