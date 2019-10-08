@@ -10,6 +10,7 @@ import os
 import subprocess
 import pandas as pd
 import sys
+from snipsTools import SnipsConfigParser
 import json
 
 CONFIG_INI = "config.ini"
@@ -24,6 +25,7 @@ screen_size = (1024, 600)
 PAT_position = (-250, 100)
 DEBUG = False
 BG_IMAGE = "CSA_logo.jpg"
+CONFIG_INI = "config.ini"
 
 
 def play_mp3(path):
@@ -67,8 +69,10 @@ class FAQ_PAT(object):
             self.config = None
         '''
         # print("In __init__ of Template")
-
-        self.config = None
+        try:
+            self.config = SnipsConfigParser.read_configuration_file(CONFIG_INI)
+        except Exception:
+            self.config = None
         self.image_up = False
         self.introduction = True
         self.wake_word = wake_word
