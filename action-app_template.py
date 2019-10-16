@@ -132,10 +132,10 @@ class FAQ_PAT(object):
                         break
                 if not found_slot:
                     response = response[response[slot_name] == "default"]
-                try:
-                    slot_names.remove(slot_name)
-                except:
-                    print(f"{slot_name} not in provided slot_names: {slot_names}")
+                # try:
+                #     slot_names.remove(slot_name)
+                # except:
+                #     print(f"{slot_name} not in provided slot_names: {slot_names}")
         if len(response) == 1:
             return response
         else:
