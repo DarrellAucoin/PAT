@@ -110,6 +110,7 @@ class FAQ_PAT(object):
             mp3_file = os.path.join(ROOT_DIR, 'intents', intent.lower(), row["response_mp3"].strip())
             self.show_image(row["image"], delay=row["delay"])
             self._play_mp3(file=mp3_file)
+            break
 
     def _get_response(self, intent_message):
         intent = intent_message.intent.intent_name
