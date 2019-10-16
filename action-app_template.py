@@ -117,6 +117,7 @@ class FAQ_PAT(object):
         if ':' in intent:
             intent = intent.split(":")[1]
         response = self.tables[intent]
+        slots_dict = {}
         slot_names = self.intents[intent]
         for slot_name, v in intent_message.slots.items():
             # Attributes of slot_value: from_c_repr, value, value_type
@@ -126,6 +127,7 @@ class FAQ_PAT(object):
                     if val.slot_value.value.value in response[slot_name].values:
                         response = response[response[slot_name] == val.slot_value.value.value]
                         print(f"slot {slot_name}: {val.slot_value.value.value}")
+                        slots_dict[slot_name] = val.slot_value.value.value
                         # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
                         # slot_name, slot_value
                         found_slot = True
@@ -140,7 +142,8 @@ class FAQ_PAT(object):
             return response
         else:
             for slot_name in slot_names:
-                response = response[response[slot_name] == "default"]
+                if slot_name not in slots_dict.keys():
+                    response = response[response[slot_name] == "default"]
                 if len(response) == 1:
                     return response
         return response
