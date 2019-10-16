@@ -124,6 +124,7 @@ class FAQ_PAT(object):
                 for val in v:
                     if val.slot_value.value.value in response[slot_name].values:
                         response = response[response[slot_name] == val.slot_value.value.value]
+                        print(f"slot {slot_name}: {val.slot_value.value.value}")
                         # also has attributes confidence_score, entity, from_c_repr, range_end, range_start, raw_value,
                         # slot_name, slot_value
                         found_slot = True
@@ -230,10 +231,10 @@ class FAQ_PAT(object):
             #     self.intent_availability(hermes, intent_message)
             else:
                 self.intent_none(hermes, intent_message)
-        except Exception as inst:
-            print(type(inst))  # the exception instance
-            print(inst.args)  # arguments stored in .args
-            print(inst)  # __str__ allows args to be printed directly,
+        except: # Exception as inst:
+            # print(type(inst))  # the exception instance
+            # print(inst.args)  # arguments stored in .args
+            # print(inst)  # __str__ allows args to be printed directly,
             print("something got caught somewhere")
             sys.exit()
         finally:
